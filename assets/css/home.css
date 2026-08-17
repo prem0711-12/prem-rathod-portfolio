@@ -1,0 +1,1387 @@
+/* ==========================================================================
+   PREM RATHOD — HOME PAGE, v9 rebuild
+   "Investigation, staged as a cinematic scroll experience."
+
+   This file is loaded after style.css and only ever on index.html — it
+   does not modify or depend on anything in about.html / contact.html /
+   the case-study page. Shared tokens (colors, fonts, --ease, --gutter,
+   --maxw) come from style.css and are reused as-is so Home still feels
+   like the same site, just told at a different scale.
+
+   Structure below mirrors the page top-to-bottom:
+     1. Hero
+     2. Signal transition
+     3. Featured Case Study — pinned cinematic reveal
+     4. Sequence system (shared by "How I Work" + "Technical Focus")
+     5. Other Projects — editorial archive
+     6. Responsive
+   ========================================================================== */
+
+:root {
+  /* Home-only oversized display scale. Kept as variables so every
+     "big type as a visual element" section reads off the same ratio
+     instead of each section inventing its own clamp(). */
+  --h-display-1: clamp(46px, 8.6vw, 148px);
+  --h-display-2: clamp(34px, 5.6vw, 84px);
+  --h-display-3: clamp(24px, 3.4vw, 44px);
+  --h-line: 0.94;
+}
+
+/* ==========================================================================
+   0. CINEMATIC NAME-REVEAL LOADER (Home only — see index.html's
+   data-variant="cinematic"; other pages keep the plain loader defined
+   in style.css untouched). Positioning/background/fade-out timing
+   come from style.css's shared .loader / .loader.done rules; this
+   only styles what's inside it.
+   ========================================================== */
+.loader-inner { display: flex; flex-direction: column; align-items: center; }
+.loader-signal {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+.loader-signal-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #6fe0be;
+  box-shadow: 0 0 10px rgba(111,224,190,0.6);
+  opacity: 0;
+  transform: scale(0.4);
+}
+.loader-signal-line {
+  width: 64px;
+  height: 1px;
+  background: var(--graphite-line-strong);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+.loader-name {
+  margin: 0;
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(52px, 11vw, 168px);
+  line-height: 0.94;
+  letter-spacing: -0.03em;
+  color: var(--on-graphite);
+}
+.loader-name-row { display: block; }
+.loader-name .ch { display: inline-block; }
+.loader-role-line {
+  margin-top: 26px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--on-graphite-faint);
+  text-align: center;
+}
+
+/* ==========================================================================
+   1. HERO
+   ========================================================================== */
+.hero {
+  position: relative;
+  min-height: 100svh;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 128px 0 96px;
+  overflow: hidden;
+  border-bottom: 1px solid var(--graphite-line);
+}
+.hero-bg-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--graphite-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--graphite-line) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 70% 60% at 30% 20%, black 10%, transparent 75%);
+  opacity: 0.5;
+  pointer-events: none;
+  will-change: transform;
+}
+.hero-glow {
+  position: absolute;
+  top: -180px; left: 8%;
+  width: 620px; height: 620px;
+  background: radial-gradient(circle, rgba(49,89,232,0.30) 0%, transparent 70%);
+  filter: blur(10px);
+  pointer-events: none;
+  will-change: transform;
+  transform: translateZ(0);
+}
+.hero-shift { will-change: transform, opacity; }
+
+.hero-inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.hero-path {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--on-graphite-faint);
+  margin-bottom: 34px;
+}
+.hero-path span.node { padding: 4px 0; transition: color 0.4s ease, text-shadow 0.4s ease; position: relative; }
+.hero-path span.node.on { color: #6fe0be; text-shadow: 0 0 12px rgba(111,224,190,0.45); }
+.hero-path span.sep { color: var(--on-graphite-faint); }
+
+/* the headline is the primary visual object in the hero — oversized,
+   tight leading, occupying the dominant share of the viewport rather
+   than sharing 50/50 with a supporting panel */
+.hero-title {
+  font-size: var(--h-display-1);
+  line-height: var(--h-line);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--on-graphite);
+  margin: 0;
+  max-width: 15ch;
+}
+.hero-title .split-line { padding-bottom: 0.06em; }
+.hero-accent { color: #7c98ff; position: relative; }
+
+.hero-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 32px;
+  margin-top: 48px;
+  max-width: 900px;
+}
+.hero-sub {
+  font-size: 17px;
+  color: var(--on-graphite-dim);
+  max-width: 46ch;
+  line-height: 1.7;
+}
+.hero-actions { display: flex; gap: 14px; margin-top: 22px; flex-wrap: wrap; }
+
+/* ---------- incident console — demoted to a floating supporting
+   card rather than an equal-weight column, so the headline stays
+   the dominant visual object ---------- */
+.console-float {
+  position: absolute;
+  right: var(--gutter);
+  bottom: 96px;
+  width: min(320px, 30vw);
+  z-index: 2;
+}
+.console {
+  background: var(--graphite-2);
+  border: 1px solid var(--graphite-line-strong);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 24px 60px -20px rgba(0,0,0,0.6);
+  --mx: 50%; --my: 0%;
+}
+.console::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(320px circle at var(--mx) var(--my), rgba(49,89,232,0.14), transparent 70%);
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  opacity: 0;
+}
+.console:hover::before { opacity: 1; }
+.console-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--graphite-line);
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  color: var(--on-graphite-faint);
+  letter-spacing: 0.05em;
+}
+.console-head span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.console-head .live {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #6fe0be;
+  flex-shrink: 0;
+  margin-left: 10px;
+}
+.console-head .live .status-dot { background: #6fe0be; }
+.console-body { padding: 16px 16px 4px; }
+.console-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--graphite-line);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+}
+.console-row:last-child { border-bottom: none; }
+.console-row .k { color: var(--on-graphite-faint); }
+.console-row .v { color: var(--on-graphite); font-weight: 500; transition: color 0.3s ease; }
+.console-row .v.active-stage { color: #7c98ff; }
+.console-feed {
+  border-top: 1px dashed var(--graphite-line-strong);
+  padding: 14px 16px 16px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--on-graphite-dim);
+  min-height: 96px;
+}
+.console-feed .feed-label {
+  color: var(--on-graphite-faint);
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+  display: block;
+}
+.console-feed .feed-line {
+  display: flex;
+  gap: 9px;
+  padding: 3px 0;
+  opacity: 0;
+  transform: translateY(4px);
+  animation: feedIn 0.4s ease forwards;
+}
+.console-feed .feed-line .t { color: var(--on-graphite-faint); flex-shrink: 0; }
+.console-feed .feed-line .ok { color: #6fe0be; }
+@keyframes feedIn { to { opacity: 1; transform: translateY(0); } }
+.console-note {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--on-graphite-faint);
+  padding: 8px 16px 14px;
+  border-top: 1px solid var(--graphite-line);
+}
+
+/* ---------- scroll cue ---------- */
+.hero-scroll-cue {
+  position: absolute;
+  left: var(--gutter);
+  bottom: 40px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--on-graphite-faint);
+  z-index: 2;
+}
+.hero-scroll-line {
+  width: 1px;
+  height: 34px;
+  background: linear-gradient(180deg, var(--on-graphite-faint), transparent);
+  animation: scrollcue 1.8s ease-in-out infinite;
+}
+@keyframes scrollcue {
+  0%   { transform: scaleY(0.3); transform-origin: top; opacity: 0.3; }
+  50%  { transform: scaleY(1); transform-origin: top; opacity: 1; }
+  100% { transform: scaleY(0.3); transform-origin: bottom; opacity: 0.3; }
+}
+
+/* ==========================================================================
+   2. SIGNAL TRANSITION — hero → light content hand-off
+   ========================================================================== */
+.signal-transition {
+  background: linear-gradient(180deg, var(--graphite) 0%, var(--graphite) 15%, var(--paper) 100%);
+  padding: 60px 0 64px;
+}
+.signal-transition-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+}
+.signal-transition-line {
+  flex: 1;
+  max-width: 240px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--graphite-line-strong), transparent);
+  transform: scaleX(0);
+  transition: transform 0.9s var(--ease-soft);
+}
+.signal-transition-inner.in .signal-transition-line { transform: scaleX(1); }
+.signal-transition-text {
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--on-graphite-dim);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ---------- section head — replaces .chapter/.chapter-num for Home
+   only. Kicker + big display title + a small integrated index badge
+   (not a giant faded numeral behind the heading).
+
+   Editorial composition: instead of a title block floating alone in
+   a 720px column against a much wider section (the "left-heavy,
+   empty around it" problem on Technical Focus), the head is now a
+   full-width two-column grid — title on the left, a short right-
+   aligned meta line anchored to the same baseline on the right,
+   with a rule spanning beneath both. That gives every section intro
+   (Featured Case Study / How I Work / Technical Focus / Other
+   Projects) one consistent, balanced composition, while the meta
+   line's own text is what makes each one feel specific to its
+   section rather than a repeated template. ---------- */
+.sec-head {
+  margin-bottom: 56px;
+  max-width: none;
+  display: grid;
+  grid-template-columns: minmax(0, 720px) 1fr;
+  align-items: end;
+  column-gap: clamp(24px, 4vw, 56px);
+  padding-bottom: 26px;
+  border-bottom: 1px solid var(--border);
+}
+.sec-kicker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+.sec-kicker .sk-idx { color: var(--ink-faint); }
+.sec-kicker .sk-sep { opacity: 0.45; }
+.sec-kicker::after {
+  content: "";
+  width: 28px;
+  height: 1px;
+  background: var(--border-strong);
+  margin-left: 2px;
+}
+.sec-head[data-tone="dark"] .sec-kicker { color: var(--on-graphite-faint); }
+.sec-head[data-tone="dark"] .sec-kicker::after { background: var(--graphite-line-strong); }
+.sec-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--h-display-2);
+  line-height: 0.98;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  margin: 0;
+}
+.sec-head[data-tone="dark"] .sec-title { color: var(--on-graphite); }
+.sec-title-line { display: block; }
+
+/* Right-hand meta column — a short line of supporting text set in
+   mono, right-aligned and baseline-anchored to the title. Keeps the
+   header from reading as one dense block against a bare field, and
+   gives each section a place to say something specific about itself
+   ("7 stages", "3 core capabilities") without touching the title's
+   type size. */
+.sec-head-meta {
+  justify-self: end;
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+  color: var(--ink-faint);
+  max-width: 30ch;
+  padding-bottom: 6px;
+}
+.sec-head-meta strong { color: var(--ink-dim); font-weight: 500; }
+@media (max-width: 860px) {
+  .sec-head { grid-template-columns: 1fr; row-gap: 14px; }
+  .sec-head-meta { justify-self: start; text-align: left; max-width: none; }
+}
+
+/* ---------- case trail — continuity device from hero ---------- */
+.case-trail {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  font-size: 10.5px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 34px;
+}
+.case-trail span.on { color: var(--teal); font-weight: 600; }
+.case-trail span.sep { color: var(--border-strong); }
+
+/* ==========================================================================
+   3. FEATURED CASE STUDY — pinned cinematic reveal
+   A brief pin: the number/title scale in first, the status panel
+   arrives next, then description/tags/CTA stagger in — one continuous
+   scrub timeline (GSAP owns transform/opacity; no CSS transition on
+   the same properties), not a stack of independent fade-ins.
+   ========================================================================== */
+.case-cinema { padding: 40px 0 60px; }
+.case-cinema-pin { position: relative; }
+.case-cinema-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 0.7fr;
+  gap: 56px;
+  align-items: start;
+}
+.case-cinema-idx {
+  display: block;
+  font-size: 13px;
+  color: var(--ink-faint);
+  letter-spacing: 0.08em;
+  margin-bottom: 18px;
+  opacity: 0;
+}
+.cc-title {
+  font-size: clamp(30px, 4.4vw, 56px);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin-bottom: 20px;
+  opacity: 0;
+  transform: translateY(24px);
+}
+.cc-desc {
+  color: var(--ink-dim);
+  line-height: 1.75;
+  max-width: 54ch;
+  font-size: 16px;
+  opacity: 0;
+  transform: translateY(16px);
+}
+.cc-tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; opacity: 0; transform: translateY(16px); }
+.case-cinema-copy { min-width: 0; }
+/* Compact real-workflow pipeline (condensed from the case study's own
+   10-step flow) — gives Project 01 the same "this is a working system,
+   not a text block" visual weight as Project 02's pipeline below,
+   using the shared .pipeline-chain/.pipeline-step primitives so the
+   two projects read as one design system. Joins the same scrub
+   timeline as the tags/CTA around it (see home.js). */
+.cc-pipeline { opacity: 0; transform: translateY(16px); }
+.cc-cta { margin-top: 30px; opacity: 0; transform: translateY(16px); }
+.case-cinema-status {
+  background: var(--panel);
+  border: 1px solid var(--border-strong);
+  border-top: 2px solid var(--blue);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  opacity: 0;
+  transform: translateY(28px) scale(0.97);
+}
+.status-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  color: var(--ink-faint);
+  font-family: var(--font-mono);
+}
+.status-row:last-child { border-bottom: none; }
+.status-row .v { color: var(--ink); font-weight: 600; }
+.status-row .v.blue { color: var(--blue-deep); }
+.status-row .v.amber { color: var(--amber); }
+.status-row .v.faint { color: var(--ink-faint); font-weight: 400; }
+
+@media (max-width: 860px) {
+  .case-cinema-grid { grid-template-columns: 1fr; }
+}
+
+/* ---------- Project 02 — Equibase Race-Day Change Informer ----------
+   Same grid/typography language as the Project 01 pinned reveal
+   above, but a plain `.reveal` fade-in rather than the scrub timeline
+   — this keeps the pin/scrub engine scoped to the one project that
+   actually has a multi-stage sequence to tell. Now that this is a
+   real, working project (not the earlier "in testing" placeholder),
+   the rule/border is solid instead of dashed — the dashed treatment
+   (same as .tag.neutral and .archive-dest elsewhere) is reserved for
+   "not yet live" content. */
+.project-second { margin-top: 48px; }
+.project-card {
+  display: grid;
+  grid-template-columns: 1.3fr 0.7fr;
+  gap: 56px;
+  align-items: start;
+  padding-top: 40px;
+  border-top: 1px solid var(--border-strong);
+}
+/* Grid children don't shrink below their content's intrinsic width by
+   default — same fix already applied to Project 01's copy column
+   (.case-cinema-copy) — without this, long unbroken strings (the repo
+   URL-shaped title, mono status values) can push this column wider
+   than its 1.3fr track and throw off the whole grid's spacing. */
+.project-card-copy { min-width: 0; }
+.project-card-idx {
+  display: block;
+  font-size: 13px;
+  color: var(--ink-faint);
+  letter-spacing: 0.08em;
+  margin-bottom: 18px;
+}
+.project-card-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(22px, 2.6vw, 32px);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+.project-card-desc {
+  color: var(--ink-faint);
+  line-height: 1.75;
+  max-width: 54ch;
+  font-size: 15px;
+}
+/* Tag row for Project 02 — deliberately its own class rather than
+   reusing .cc-tags: .cc-tags starts at opacity:0 and is only ever
+   brought to opacity:1 by the caseCinemaPin scroll-timeline in
+   home.js (keyed to the #ccTags id), so reusing that class here
+   without that JS wiring would leave the tags permanently invisible. */
+.project-card-tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+/* Same pipeline-chain component Project 02 already had, plus the CTA
+   directly below it — this is the pairing that had no defined gap
+   before, so the button sat flush against the last pill. */
+.project-card-copy .pipeline-chain { margin-top: 24px; }
+.project-card-copy .btn { margin-top: 28px; }
+.project-card-status {
+  background: var(--panel);
+  border: 1px solid var(--border-strong);
+  /* Matches Project 01's status panel (.case-cinema-status) top accent
+     — teal here instead of blue, echoing this project's own accent
+     color (REPOSITORY · PUBLIC, the Change Detection tag) so the two
+     status panels read as the same component, not two different ones. */
+  border-top: 2px solid var(--teal);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+}
+.status-row .v.teal { color: var(--teal); }
+/* Evidence strip below the card — reuses the same .change-list /
+   .notify-line / .path-note components already used inside Technical
+   Focus's automation examples, just placed under the project card
+   instead of inside a seq-panel, so it inherits the same look without
+   a second visual language. */
+.project-card-evidence {
+  margin-top: 36px;
+  padding-top: 28px;
+  border-top: 1px solid var(--border);
+}
+@media (max-width: 860px) {
+  .project-card { grid-template-columns: 1fr; gap: 24px; }
+}
+
+/* ==========================================================================
+   4. SEQUENCE SYSTEM — shared by "How I Work" and "Technical Focus"
+   Vertical scroll drives horizontal cinematic progression. Default
+   markup (no JS, touch, reduced motion, or narrow viewport) is a
+   plain horizontal scroll-snap strip — .seq-pin.pin-active is added
+   by JS only where a pin+scrub is actually appropriate, and every
+   panel's x / scale / opacity is then driven straight from JS every
+   scrub tick (see home.js) — never through a CSS `transition`, so
+   nothing fights the scrub frame to frame.
+   ========================================================================== */
+.seq-section { padding: 16px 0 100px; }
+.seq-pin { position: relative; overflow: hidden; }
+.seq-track {
+  display: flex;
+  align-items: stretch;
+  gap: 4vw;
+  padding: 8px var(--gutter) 0;
+  will-change: transform;
+}
+.seq-pin.pin-active .seq-track {
+  display: grid;
+  grid-template-columns: 1fr;
+  padding-top: 8px;
+}
+.seq-panel {
+  position: relative;
+  background: var(--panel);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  opacity: 0.35;
+  transform: scale(0.92);
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+  z-index: 1;
+  pointer-events: none;
+}
+.seq-pin.pin-active .seq-panel {
+  grid-area: 1 / 1;
+  justify-self: center;
+  align-self: center;
+  flex: none;
+  will-change: transform, opacity;
+}
+/* Safety valve: on shorter laptop viewports a fully-loaded stage can
+   exceed 88vh even after generous sizing — scroll the panel's own
+   content in that case rather than clipping it under .seq-pin's
+   overflow:hidden. Thin, unobtrusive scrollbar so it doesn't read as
+   a UI chrome element. */
+.seq-pin.pin-active .seq-panel { scrollbar-width: thin; scrollbar-color: var(--border-strong) transparent; }
+.seq-pin.pin-active .seq-panel::-webkit-scrollbar { width: 6px; }
+.seq-pin.pin-active .seq-panel::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+
+.seq-panel::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 0; height: 3px;
+  background: linear-gradient(90deg, var(--blue), var(--teal));
+  border-radius: var(--radius-lg) 0 0 0;
+  transition: width 0.6s var(--ease);
+}
+.seq-panel.active {
+  opacity: 1;
+  transform: scale(1);
+  border-color: var(--blue);
+  box-shadow: 0 30px 70px -34px rgba(20,20,30,0.28);
+  z-index: 5;
+  pointer-events: auto;
+}
+.seq-panel.active::before { width: 100%; }
+.seq-panel-n {
+  display: block;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  color: var(--ink-faint);
+  transition: color 0.4s ease;
+}
+.seq-panel.active .seq-panel-n { color: var(--amber); }
+.seq-panel h3 { letter-spacing: -0.015em; color: var(--ink); }
+.seq-panel p { color: var(--ink-dim); line-height: 1.8; }
+
+/* ---------- evidence rows — compact key:value readout reusing the
+   hero console's visual language, so a stage feels like it's showing
+   real investigation state rather than a caption ---------- */
+.seq-evidence {
+  margin-top: 22px;
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+}
+.seq-evidence-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 0;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  border-bottom: 1px solid var(--border);
+}
+.seq-evidence-row:last-child { border-bottom: none; }
+.seq-evidence-row .k { color: var(--ink-faint); }
+.seq-evidence-row .v { color: var(--ink); font-weight: 600; }
+.seq-evidence-row .v.amber { color: var(--amber); }
+.seq-evidence-row .v.teal { color: var(--teal); }
+.seq-evidence-row .v.coral { color: var(--coral); }
+.seq-evidence-row .v.blue { color: var(--blue-deep); }
+
+/* ---------- path note — a single reconstructed sentence of state,
+   used where a full evidence table would be overkill (e.g. an
+   investigation path or a pipeline's last-run line) ---------- */
+.path-note { margin-top: 16px; font-size: 10.5px; color: var(--ink-faint); line-height: 1.7; }
+.path-note .v { color: var(--ink); font-weight: 600; }
+
+/* ---------- log mock — an original, GCP-Logs-inspired mini viewer:
+   query bar + severity-coded entries, built from scratch with
+   fictional data (not a screenshot / not a copy of Google's UI) ---------- */
+.log-mock {
+  margin-top: 22px;
+  background: var(--graphite);
+  border: 1px solid var(--graphite-line-strong);
+  border-radius: 10px;
+  overflow: hidden;
+  font-family: var(--font-mono);
+}
+.log-mock-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--graphite-line);
+  font-size: 10.5px;
+  color: var(--on-graphite-faint);
+}
+.log-mock-bar svg { width: 12px; height: 12px; flex-shrink: 0; opacity: 0.7; }
+.log-mock-rows { padding: 6px 0; }
+.log-mock-row {
+  display: grid;
+  grid-template-columns: 52px 76px 1fr;
+  gap: 10px;
+  align-items: baseline;
+  padding: 6px 12px;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.log-mock-sev { font-weight: 700; letter-spacing: 0.04em; }
+.log-mock-row.err .log-mock-sev { color: #ff8a80; }
+.log-mock-row.warn .log-mock-sev { color: #ffcf7d; }
+.log-mock-row.info .log-mock-sev { color: #6fe0be; }
+.log-mock-t { color: var(--on-graphite-faint); }
+.log-mock-msg { color: var(--on-graphite-dim); }
+.log-mock-msg .hi { color: var(--on-graphite); }
+
+/* ---------- pipeline chain — automation sequence, TRIGGER through
+   CLOSE, as a compact horizontal state chain rather than a dashboard ---------- */
+.pipeline-chain {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 0;
+  margin-top: 24px;
+}
+/* Each step is wrapped with its trailing arrow in one .pipeline-item so
+   the two never separate when the chain wraps onto a new line — before
+   this, a step and its arrow were independent flex children, so a wrap
+   could strand an arrow alone at the end of a row with its step bumped
+   to the next line. */
+.pipeline-item { display: inline-flex; align-items: center; flex-shrink: 0; }
+.pipeline-step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.05em;
+  color: var(--ink-dim);
+  background: var(--panel);
+}
+.pipeline-step .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border-strong); flex-shrink: 0; }
+.pipeline-step.done { color: var(--ink); border-color: var(--teal); }
+.pipeline-step.done .dot { background: var(--teal); }
+.pipeline-arrow { color: var(--ink-faint); margin: 0 6px; font-size: 12px; flex-shrink: 0; }
+.pipeline-meta {
+  margin-top: 14px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--ink-faint);
+}
+.pipeline-meta .v { color: var(--teal); font-weight: 600; }
+
+@media (max-width: 700px) {
+  .log-mock-row { grid-template-columns: 44px 1fr; }
+  .log-mock-t { display: none; }
+}
+
+/* ---------- investigation chain — vertical stepped readout for
+   Root Cause (SYMPTOM → TRIGGER → EVIDENCE → ROOT CAUSE →
+   CONFIRMATION). Distinct from the pill-based .pipeline-chain so
+   the two "flow" moments on the page don't read as the same
+   component reused twice. ---------- */
+.chain-flow { margin-top: 22px; display: flex; flex-direction: column; }
+.chain-step { position: relative; display: flex; gap: 14px; padding: 9px 0; }
+.chain-step:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  left: 5px; top: 22px; bottom: -5px;
+  width: 1px;
+  background: var(--border-strong);
+}
+.chain-dot {
+  width: 11px; height: 11px;
+  border-radius: 50%;
+  background: var(--panel);
+  border: 2px solid var(--border-strong);
+  flex-shrink: 0;
+  margin-top: 2px;
+  z-index: 1;
+}
+.chain-body { min-width: 0; }
+.chain-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 3px;
+}
+.chain-value { font-size: 13.5px; color: var(--ink); font-weight: 500; line-height: 1.5; }
+.chain-step.is-cause .chain-dot { border-color: var(--coral); background: var(--coral-tint); }
+.chain-step.is-cause .chain-value { color: var(--coral); font-weight: 600; }
+.chain-step.is-confirm .chain-dot { border-color: var(--teal); background: var(--teal-tint); }
+.chain-step.is-confirm .chain-value { color: var(--teal); font-weight: 600; }
+
+/* ---------- verify grid — small evidence chips for Validate, so
+   the stage reads as a set of independently-checked signals rather
+   than one paragraph of key:value rows ---------- */
+.verify-grid { margin-top: 22px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.verify-chip { border: 1px solid var(--border); border-radius: var(--radius); padding: 11px 13px; background: var(--paper); }
+.vc-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 6px;
+}
+.vc-value { font-size: 12.5px; font-weight: 600; color: var(--ink); display: flex; align-items: center; gap: 6px; }
+.vc-value.pass { color: var(--teal); }
+.vc-value.pass::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--teal); flex-shrink: 0; }
+.vc-value.fail { color: var(--coral); }
+.vc-value.fail::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--coral); flex-shrink: 0; }
+
+/* ---------- mini timeline — compact horizontal incident timeline,
+   used to close out Document/Communicate and to show lifecycle in
+   Production & Application Support ---------- */
+.mini-timeline { margin-top: 22px; display: flex; align-items: flex-start; }
+.mt-step { flex: 1; position: relative; padding-top: 18px; min-width: 0; }
+.mt-step::before {
+  content: "";
+  position: absolute;
+  top: 5px; left: 0;
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--panel);
+  border: 2px solid var(--border-strong);
+}
+.mt-step::after {
+  content: "";
+  position: absolute;
+  top: 9px; left: 9px; right: -2px;
+  height: 1px;
+  background: var(--border-strong);
+}
+.mt-step:last-child::after { display: none; }
+.mt-step.done::before { border-color: var(--teal); background: var(--teal); }
+.mt-step.done::after { background: var(--teal); opacity: 0.5; }
+.mt-time { display: block; font-family: var(--font-mono); font-size: 9.5px; color: var(--ink-faint); margin-bottom: 4px; }
+.mt-label { font-size: 11px; color: var(--ink); font-weight: 500; line-height: 1.35; padding-right: 6px; }
+
+/* ---------- service health list — Production & Application
+   Support secondary evidence ---------- */
+.health-list { margin-top: 20px; display: flex; flex-direction: column; gap: 8px; }
+.health-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--paper);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+.health-row .hr-name { color: var(--ink); display: flex; align-items: center; gap: 8px; }
+.health-row .hr-name::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--teal); flex-shrink: 0; }
+.health-row.warn .hr-name::before { background: var(--amber); }
+.health-row .hr-status { color: var(--ink-faint); }
+.health-row.warn .hr-status { color: var(--amber); }
+
+/* ---------- sql block — original mini SQL viewer, same dark
+   "console" material as .log-mock but for a single investigation
+   query rather than a log stream ---------- */
+.sql-block {
+  margin-top: 16px;
+  background: var(--graphite);
+  border: 1px solid var(--graphite-line-strong);
+  border-radius: 10px;
+  padding: 13px 14px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--on-graphite-dim);
+  line-height: 1.7;
+  overflow-x: auto;
+  white-space: pre;
+}
+.sql-block .kw { color: #7c98ff; }
+.sql-block .fn { color: #6fe0be; }
+.sql-block .str { color: #ffcf7d; }
+.sql-block--flush { margin-top: 0; border: none; padding: 0; }
+.tool-window--stacked { margin-top: 14px; }
+
+/* -- "Technical Focus" sizing: 3 panels, each a FULL investigation
+   screen rather than a card — width and height both scale off the
+   viewport so the active panel is the dominant object on screen.
+
+   This used to cap the active panel at max-height:88vh with its own
+   overflow-y:auto — a nested scrollbar inside the card. Removed: the
+   panel now sizes to its natural content height (min-height only, no
+   cap) and .seq-pin--focus itself allows vertical overflow instead of
+   clipping it, so the full panel is always visible with no internal
+   scroll. The pin/scrub behaviour (horizontal progression driven by
+   vertical scroll, via home.js's createSequence) is untouched — only
+   this section's own overflow/height handling changed. Deliberately
+   scoped to --focus only; "How I Work" (.seq-pin--workflow) keeps its
+   existing max-height/overflow-y:auto as-is. -- */
+.seq-pin--focus .seq-panel { flex: 0 0 min(1220px, 90vw); padding: clamp(32px, 4vw, 56px); }
+.seq-pin--focus.pin-active .seq-panel { width: min(1360px, 94vw); min-height: min(760px, 82vh); display: flex; flex-direction: column; overflow: visible; }
+.seq-pin.seq-pin--focus { overflow-y: visible; }
+.seq-pin--focus .seq-panel-n { font-size: clamp(15px, 1.6vw, 18px); margin-bottom: 18px; }
+.seq-pin--focus .seq-panel h3 { font-size: clamp(24px, 3vw, 38px); margin-bottom: 12px; }
+.seq-pin--focus .seq-panel p { font-size: 15px; max-width: 62ch; }
+
+/* -- "How I Work" sizing: 7 panels, one investigation chapter each,
+   also scaled to fill most of the viewport (slightly brisker cadence
+   than Technical Focus since there are more of them). -- */
+.seq-pin--workflow .seq-panel { flex: 0 0 min(1120px, 90vw); padding: clamp(30px, 3.6vw, 52px); }
+.seq-pin--workflow.pin-active .seq-panel { width: min(1200px, 94vw); min-height: min(720px, 80vh); max-height: 88vh; display: flex; flex-direction: column; overflow-y: auto; }
+.seq-pin--workflow .seq-panel-n { font-size: 13px; margin-bottom: 14px; }
+.seq-pin--workflow .seq-panel h3 { font-size: clamp(21px, 2.6vw, 30px); margin-bottom: 8px; }
+.seq-pin--workflow .seq-panel p { font-size: 14px; max-width: 52ch; }
+
+/* Give the pinned stage a deliberate share of the viewport so the
+   active panel + evidence rail are composed within it, rather than
+   sitting near the top with a dead band of empty page below — the
+   pin itself (not the panel) owns the vertical rhythm. Scoped to
+   .pin-active only: the no-pin/touch fallback keeps its natural,
+   unpinned document flow. */
+.seq-pin.pin-active {
+  min-height: 94vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4vh;
+}
+
+/* ---------- two-column composition inside a full-viewport panel —
+   narrative/evidence on the left, a technical mockup on the right,
+   so the stage reads as a real screen rather than a caption over
+   white space. Falls back to a single column once the panel itself
+   drops to its mobile flex-basis. ---------- */
+.seq-panel-grid {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  gap: clamp(20px, 3vw, 40px);
+  align-items: start;
+  flex: 1;
+}
+.seq-panel-col { min-width: 0; display: flex; flex-direction: column; gap: 18px; }
+.seq-panel-col > .seq-evidence:first-child { margin-top: 0; }
+
+/* ---------- notif-card — original Slack/Jira-inspired incident
+   notification. Built from scratch (no screenshots), same dark
+   "console" material used elsewhere on Home. ---------- */
+.notif-card {
+  background: var(--graphite);
+  border: 1px solid var(--graphite-line-strong);
+  border-radius: 12px;
+  overflow: hidden;
+  font-family: var(--font-sans);
+}
+.notif-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--graphite-line);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  color: var(--on-graphite-faint);
+}
+.notif-app-badge {
+  width: 22px; height: 22px;
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 700;
+  flex-shrink: 0;
+}
+.notif-app-badge.slack { background: linear-gradient(135deg, #611f69, #36c5f0); color: #fff; }
+.notif-app-badge.jira { background: linear-gradient(135deg, #0052cc, #2684ff); color: #fff; }
+.notif-card-head .chan { color: var(--on-graphite); font-weight: 600; }
+.notif-card-body { padding: 14px 14px 6px; }
+.notif-msg-row { display: flex; gap: 10px; padding: 8px 0; }
+.notif-avatar {
+  width: 28px; height: 28px; border-radius: 7px; flex-shrink: 0;
+  background: var(--graphite-3);
+  border: 1px solid var(--graphite-line-strong);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: 9.5px; color: var(--on-graphite-dim); font-weight: 700;
+}
+.notif-msg-body { min-width: 0; }
+.notif-msg-name { font-size: 12.5px; font-weight: 600; color: var(--on-graphite); display: flex; align-items: center; gap: 8px; }
+.notif-msg-name .time { font-family: var(--font-mono); font-size: 10px; font-weight: 400; color: var(--on-graphite-faint); }
+.notif-msg-text { font-size: 12.5px; color: var(--on-graphite-dim); line-height: 1.6; margin-top: 3px; }
+.notif-msg-text .hi { color: #ff8a80; font-weight: 600; }
+.notif-card-foot {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px;
+  border-top: 1px dashed var(--graphite-line-strong);
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+.notif-ticket-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--graphite-line-strong);
+  color: var(--on-graphite-dim);
+}
+.notif-ticket-chip .k { color: #2684ff; font-weight: 700; }
+.notif-card-foot .severity-pill {
+  padding: 4px 9px; border-radius: 999px; font-weight: 700; letter-spacing: 0.05em;
+}
+.severity-pill.high { color: #ff8a80; background: rgba(255,138,128,0.12); }
+
+/* ---------- impact app mock — original betting-platform bet-slip
+   mockup used to visualise business impact, not a real product UI. ---------- */
+.impact-app-mock {
+  background: var(--panel);
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.impact-app-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+}
+.impact-selection {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.impact-selection .race { color: var(--ink-faint); font-family: var(--font-mono); font-size: 10.5px; }
+.impact-selection .runner { color: var(--ink); font-weight: 600; }
+.impact-selection .odds { font-family: var(--font-mono); color: var(--ink-dim); }
+.impact-error-banner {
+  margin: 14px 16px 16px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: var(--coral-tint);
+  border: 1px solid rgba(179,64,42,0.28);
+  color: var(--coral);
+  font-size: 12.5px;
+  font-weight: 600;
+  display: flex; align-items: center; gap: 9px;
+}
+.impact-error-banner::before { content: "!"; width: 18px; height: 18px; border-radius: 50%; background: var(--coral); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; }
+.impact-status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 16px 16px; }
+.impact-status-chip {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  background: var(--paper);
+}
+.impact-status-chip .lbl { display: block; font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 5px; }
+.impact-status-chip .val { font-size: 12.5px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+.impact-status-chip .val::before { content: ""; width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.impact-status-chip.degraded .val { color: var(--amber); }
+.impact-status-chip.degraded .val::before { background: var(--amber); }
+.impact-status-chip.failed .val { color: var(--coral); }
+.impact-status-chip.failed .val::before { background: var(--coral); }
+
+/* ---------- investigation workstation — a small cluster of
+   original technical-tool mockups (GCP-style logs, DBeaver/Cassandra
+   query panel, API response) composed together so the stage reads
+   as a real workbench rather than one isolated widget. ---------- */
+.investigation-workstation { display: flex; flex-direction: column; gap: 14px; }
+.tool-window {
+  background: var(--graphite);
+  border: 1px solid var(--graphite-line-strong);
+  border-radius: 10px;
+  overflow: hidden;
+  font-family: var(--font-mono);
+}
+.tool-window-bar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--graphite-line);
+  font-size: 10px;
+  color: var(--on-graphite-faint);
+  letter-spacing: 0.05em;
+}
+.tool-window-dots { display: flex; gap: 5px; margin-right: 4px; }
+.tool-window-dots span { width: 7px; height: 7px; border-radius: 50%; background: var(--graphite-line-strong); }
+.tool-window-title { color: var(--on-graphite-dim); }
+.tool-window-body { padding: 12px 14px; font-size: 11px; color: var(--on-graphite-dim); }
+.db-row { display: grid; grid-template-columns: 108px 1fr; gap: 10px; padding: 5px 0; border-bottom: 1px solid var(--graphite-line); }
+.db-row:last-child { border-bottom: none; }
+.db-row .col { color: var(--on-graphite-faint); }
+.db-row .val { color: var(--on-graphite); }
+.db-row .val.fail { color: #ff8a80; font-weight: 600; }
+.api-resp-line { display: flex; gap: 10px; padding: 3px 0; }
+.api-resp-line .k { color: var(--on-graphite-faint); width: 108px; flex-shrink: 0; }
+.api-resp-line .v { color: var(--on-graphite); }
+.api-resp-line .v.fail { color: #ff8a80; }
+
+/* ---------- doc mock — original GitHub-issue-style and
+   Google-Docs-style panels used to visualise documentation and
+   communication, built from scratch rather than copied UI. ---------- */
+.doc-mock-row { display: flex; flex-direction: column; gap: 14px; }
+.doc-window {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border-strong);
+  background: var(--panel);
+}
+.doc-window-bar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 12px;
+  background: var(--paper);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ink-faint);
+}
+.doc-window-bar .dots { display: flex; gap: 5px; margin-right: 4px; }
+.doc-window-bar .dots span { width: 7px; height: 7px; border-radius: 50%; background: var(--border-strong); }
+.doc-window.github .doc-window-bar { background: #0d1117; border-bottom-color: rgba(255,255,255,0.1); color: #8b949e; }
+.doc-window.github .doc-window-body { background: #0d1117; color: #c9d1d9; }
+.doc-window-body { padding: 14px; font-size: 12px; line-height: 1.7; }
+.doc-window-body h4 { margin: 0 0 8px; font-size: 13px; color: inherit; }
+.doc-window-body .doc-tag {
+  display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 999px;
+  font-family: var(--font-mono); font-size: 9.5px; margin-right: 6px; margin-bottom: 8px;
+}
+.doc-window.github .doc-tag { background: rgba(63,185,80,0.15); color: #3fb950; }
+.doc-window:not(.github) .doc-tag { background: var(--teal-tint); color: var(--teal); }
+.doc-window-body ul { margin: 6px 0 0; padding-left: 18px; color: inherit; opacity: 0.85; }
+.doc-window-body li { margin-bottom: 4px; }
+.doc-window-body p { color: inherit; opacity: 0.85; line-height: 1.7; margin: 0; }
+
+/* ---------- automation example block — used twice in Technical
+   Focus 03 so two projects (shipped + in progress) can share the
+   same visual language without looking like duplicated cards. ---------- */
+.automation-example { padding-top: 18px; border-top: 1px solid var(--border); }
+.automation-example:first-child { padding-top: 0; border-top: none; }
+.automation-example-head { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; flex-wrap: wrap; }
+.automation-example-head h4 { font-size: 15px; color: var(--ink); margin: 0; }
+.status-flag {
+  font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 3px 9px; border-radius: 999px; font-weight: 700;
+}
+.status-flag.live { color: var(--teal); background: var(--teal-tint); }
+.status-flag.progress { color: var(--amber); background: var(--amber-tint); }
+.automation-example p { font-size: 13.5px; max-width: none; margin-top: 2px; }
+.change-list { margin-top: 14px; display: flex; flex-direction: column; gap: 7px; }
+.change-list-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--paper);
+  font-size: 12px;
+}
+.change-list-row .ct { font-family: var(--font-mono); font-size: 9.5px; color: var(--ink-faint); }
+.notify-line {
+  margin-top: 12px;
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-size: 11px; color: var(--teal); font-weight: 600;
+}
+
+.seq-rail {
+  position: relative;
+  margin-top: 30px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+/* pin-active already spaces track → rail with its own flex `gap`
+   (see .seq-pin.pin-active above) — drop the rail's own margin-top
+   there so the two spacing rules don't stack. */
+.seq-pin.pin-active .seq-rail { margin-top: 0; }
+.seq-rail-line {
+  flex: 1;
+  position: relative;
+  height: 2px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.seq-rail-fill {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--teal), var(--blue));
+  transition: width 0.4s var(--ease-soft);
+}
+.seq-dots {
+  display: flex;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+.seq-dot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  border: 1px solid var(--border-strong);
+  color: var(--ink-faint);
+  transition: color 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+}
+.seq-dot.active { color: var(--blue-deep); border-color: var(--blue); background: var(--blue-tint); }
+
+/* touch / no-pin fallback: plain user-driven horizontal scroll-snap */
+.seq-pin.no-pin { overflow: visible; }
+.seq-pin.no-pin .seq-track {
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.seq-pin.no-pin .seq-track::-webkit-scrollbar { display: none; }
+.seq-pin.no-pin .seq-panel {
+  scroll-snap-align: center;
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+.seq-pin.no-pin .seq-panel.active { border-color: var(--blue); }
+
+@media (max-width: 860px) {
+  .seq-pin--focus .seq-panel { flex-basis: 82vw; padding: 28px 22px 26px; }
+  .seq-pin--workflow .seq-panel { flex-basis: 78vw; padding: 26px 20px 24px; }
+  .seq-rail { margin-top: 24px; }
+  .seq-panel-grid { grid-template-columns: 1fr; }
+  .impact-status-grid { grid-template-columns: 1fr 1fr; }
+  .db-row { grid-template-columns: 88px 1fr; }
+  .api-resp-line .k { width: 88px; }
+}
+
+/* ==========================================================================
+   5. OTHER PROJECTS — editorial archive
+   Rows, not cards: a large index number, title + one-line description,
+   a status tag, and an arrow — closed off by a single strong
+   "Destination" strip rather than a scattered node network. Reveal
+   reuses the site-wide .stagger-group / .stagger-item mechanism
+   already in style.css + main.js — no extra JS needed here.
+   ========================================================================== */
+.archive-section { padding: 24px 0 110px; }
+.archive-list { margin-top: 8px; }
+.archive-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 64px 1fr auto 30px;
+  align-items: center;
+  gap: 24px;
+  padding: 30px 6px;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.3s ease, padding-left 0.3s var(--ease-soft);
+}
+.archive-row:first-child { border-top: 1px solid var(--border); }
+.archive-row:hover, .archive-row:focus-visible {
+  background: var(--panel);
+  padding-left: 16px;
+}
+.archive-n {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(26px, 2.8vw, 38px);
+  color: var(--border-strong);
+  letter-spacing: -0.01em;
+  transition: color 0.3s ease;
+}
+.archive-row:hover .archive-n { color: var(--blue); }
+.archive-body { min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.archive-body h3 {
+  font-size: clamp(19px, 2vw, 24px);
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  position: relative;
+  display: inline-block;
+  width: fit-content;
+}
+.archive-body h3::after {
+  content: "";
+  position: absolute;
+  left: 0; bottom: -3px;
+  width: 0%; height: 1.5px;
+  background: var(--blue);
+  transition: width 0.35s var(--ease-soft);
+}
+.archive-row:hover .archive-body h3::after { width: 100%; }
+.archive-body p {
+  color: var(--ink-dim);
+  font-size: 14px;
+  line-height: 1.6;
+  max-width: 56ch;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.archive-tag { justify-self: end; white-space: nowrap; }
+.archive-arrow {
+  color: var(--ink-faint);
+  transition: transform 0.3s var(--ease), color 0.25s ease;
+}
+.archive-arrow svg { width: 18px; height: 18px; display: block; }
+.archive-row:hover .archive-arrow { transform: rotate(45deg); color: var(--blue); }
+
+.archive-dest {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-top: 30px;
+  padding: 28px 30px;
+  border: 1.5px dashed var(--border-strong);
+  border-radius: var(--radius-lg);
+  transition: border-color 0.3s ease, background 0.3s ease;
+}
+.archive-dest:hover { border-color: var(--ink); background: var(--panel); border-style: solid; }
+.archive-dest-icon { color: var(--ink); flex-shrink: 0; }
+.archive-dest-icon svg { width: 26px; height: 26px; display: block; }
+.archive-dest-lbl-wrap { display: flex; flex-direction: column; gap: 4px; }
+.archive-dest-lbl {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.archive-dest-name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(19px, 2.2vw, 26px);
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+.archive-dest-arrow {
+  margin-left: auto;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--border-strong);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--ink-dim);
+  transition: transform 0.3s var(--ease), color 0.25s ease, border-color 0.25s ease;
+  flex-shrink: 0;
+}
+.archive-dest:hover .archive-dest-arrow { transform: rotate(45deg); color: var(--blue); border-color: var(--blue); }
+.archive-dest-arrow svg { width: 16px; height: 16px; }
+
+@media (max-width: 700px) {
+  .archive-row { grid-template-columns: 40px 1fr; row-gap: 10px; }
+  .archive-arrow { display: none; }
+  .archive-tag { grid-column: 2; justify-self: start; }
+  .archive-dest { flex-wrap: wrap; }
+  .archive-dest-name { font-size: 18px; }
+}
+
+/* ==========================================================================
+   6. RESPONSIVE — global home tweaks
+   ========================================================================== */
+@media (max-width: 860px) {
+  .hero { padding: 108px 0 72px; min-height: auto; }
+  .hero-foot { flex-direction: column; align-items: flex-start; }
+  .console-float {
+    position: static;
+    width: 100%;
+    margin-top: 40px;
+  }
+  .hero-scroll-cue { display: none; }
+  .signal-transition-text { white-space: normal; text-align: center; }
+  .signal-transition-line { max-width: 60px; }
+}

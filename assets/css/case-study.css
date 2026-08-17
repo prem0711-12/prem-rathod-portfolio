@@ -1,0 +1,371 @@
+.cs-hero {
+  padding: 56px 0 44px;
+  border-bottom: 1px solid var(--graphite-line);
+}
+.cs-title { font-size: clamp(30px, 3.8vw, 46px); margin: 16px 0 18px; letter-spacing: -0.025em; color: var(--on-graphite); }
+.cs-sub { color: var(--on-graphite-dim); max-width: 64ch; line-height: 1.75; font-size: 16.5px; }
+.cs-badges { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 26px; }
+
+.cs-layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 60px;
+  padding: 56px 0 40px;
+  align-items: start;
+}
+
+/* sticky pipeline-spine nav */
+.checklist {
+  position: sticky;
+  top: 92px;
+  display: flex;
+  flex-direction: column;
+}
+.checklist-spine {
+  position: absolute;
+  left: 4px; top: 15px; bottom: 15px;
+  width: 1.5px;
+  background: var(--border-strong);
+  overflow: hidden;
+}
+.checklist-fill {
+  position: absolute;
+  left: 0; top: 0;
+  width: 100%;
+  height: 0%;
+  background: linear-gradient(var(--teal), var(--blue));
+  transition: height 0.25s linear;
+}
+.checklist a {
+  position: relative;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-faint);
+  padding: 11px 0 11px 22px;
+  transition: color 0.2s ease;
+}
+.checklist a::after {
+  content: "";
+  position: absolute;
+  left: 0; top: 15px;
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--panel);
+  border: 1.5px solid var(--border-strong);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.checklist a:last-child::before { bottom: calc(50% - 2px); }
+.checklist a.done { color: var(--ink-dim); }
+.checklist a.done::after { background: var(--teal); border-color: var(--teal); }
+.checklist a.active { color: var(--blue-deep); font-weight: 600; }
+.checklist a.active::after { background: var(--blue); border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-tint); }
+
+.cs-sections { display: flex; flex-direction: column; gap: 92px; padding-bottom: 60px; }
+.cs-section h2 { font-size: 25px; margin-bottom: 20px; line-height: 1.32; }
+.cs-section .eyebrow { margin-bottom: 14px; }
+.cs-body { color: var(--ink-dim); line-height: 1.8; font-size: 15.5px; max-width: 68ch; }
+.cs-body strong { color: var(--ink); font-weight: 600; }
+.cs-body + .cs-body { margin-top: 16px; }
+
+/* workflow diagram */
+.flow-wrap { margin-top: 32px; display: flex; flex-direction: column; gap: 22px; }
+.flow { display: flex; flex-direction: column; gap: 0; max-width: 520px; }
+.flow-step {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 0;
+  opacity: 0.4;
+  transform: translateX(-8px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.flow-step.lit { opacity: 1; transform: translateX(0); }
+.flow-step.sim-active { opacity: 1; transform: translateX(0); }
+.flow-step .num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--panel);
+  background: var(--ink-faint);
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.35s ease, transform 0.2s ease;
+}
+.flow-step.lit .num { background: var(--blue); }
+.flow-step.sim-active .num { background: var(--teal); transform: scale(1.12); }
+.flow-step .label { font-size: 14.5px; color: var(--ink-dim); }
+.flow-step.lit .label { color: var(--ink); }
+.flow-step.sim-active .label { color: var(--teal); font-weight: 500; }
+.flow-line { width: 1.5px; height: 16px; background: var(--border-strong); margin-left: 13px; }
+.flow-step.branch.lit .num { background: var(--amber); }
+.flow-step.branch.lit .label { color: var(--amber); }
+
+/* run-simulation control + readout */
+.sim-controls { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.sim-readout {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--ink-faint);
+}
+.sim-readout .state { color: var(--blue-deep); font-weight: 600; }
+
+/* availability example */
+.presence-grid { display: flex; gap: 16px; margin-top: 26px; flex-wrap: wrap; }
+.presence-card {
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  min-width: 200px;
+  background: var(--panel);
+}
+.presence-card .name { color: var(--ink); margin-bottom: 8px; font-weight: 600; }
+.presence-card .stat { display: flex; align-items: center; gap: 8px; color: var(--ink-dim); }
+.presence-card .dot { width: 7px; height: 7px; border-radius: 50%; }
+.presence-card.eligible { box-shadow: 4px 4px 0 var(--teal-tint); }
+.presence-card.excluded { box-shadow: 4px 4px 0 var(--border); }
+.presence-card.eligible .dot { background: var(--teal); }
+.presence-card.excluded .dot { background: var(--ink-faint); }
+.presence-card.eligible .result { color: var(--teal); font-weight: 600; }
+.presence-card.excluded .result { color: var(--ink-faint); }
+
+/* demo — premium framed presentation */
+.demo-frame {
+  border: 1px solid var(--graphite-line-strong);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-top: 28px;
+  background: var(--graphite-2);
+  box-shadow: 0 24px 50px -22px rgba(0,0,0,0.45);
+}
+.demo-frame-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--graphite-line);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--on-graphite-faint);
+  letter-spacing: 0.06em;
+}
+.demo-frame-bar .live-tag { display: inline-flex; align-items: center; gap: 6px; color: #6fe0be; }
+.demo-frame-bar .live-tag .status-dot { background: #6fe0be; }
+.demo-media { position: relative; overflow: hidden; }
+.demo-media img { width: 100%; display: block; }
+.demo-scan {
+  position: absolute;
+  left: 0; right: 0; top: -20%;
+  height: 20%;
+  background: linear-gradient(180deg, transparent, rgba(124,152,255,0.14), transparent);
+  pointer-events: none;
+  animation: demoScan 5s ease-in-out infinite;
+}
+@keyframes demoScan {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(600%); }
+  100% { transform: translateY(0); }
+}
+.demo-caption {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--on-graphite-dim);
+  padding: 13px 18px;
+  border-top: 1px solid var(--graphite-line);
+}
+.demo-tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+.demo-note { color: var(--ink-dim); font-size: 14px; margin-top: 14px; max-width: 62ch; line-height: 1.7; }
+@media (prefers-reduced-motion: reduce) {
+  .demo-scan { display: none; }
+}
+
+/* exhibit terminal (works as dark contrast panel on light bg) */
+.terminal {
+  margin-top: 28px;
+  background: var(--graphite-2);
+  border: 1px solid var(--graphite-line-strong);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 18px 40px -20px rgba(0,0,0,0.4);
+}
+.terminal-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--graphite-line);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--on-graphite-faint);
+  letter-spacing: 0.05em;
+}
+.terminal pre {
+  margin: 0;
+  padding: 20px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.85;
+  color: var(--on-graphite-dim);
+  overflow-x: auto;
+}
+.terminal pre .ok { color: #6fe0be; font-weight: 600; }
+.terminal pre .muted { color: var(--on-graphite-faint); }
+
+@media (max-width: 860px) {
+  .cs-layout { grid-template-columns: 1fr; }
+  .checklist {
+    position: static;
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 4px;
+    padding-bottom: 10px;
+  }
+  .checklist a { white-space: nowrap; padding-left: 18px; }
+  .checklist-spine { display: none; }
+}
+
+/* ==========================================================================
+   PROJECT DETAIL NAVIGATION — lets a visitor move between the two case
+   study pages and back to the selector, without feeling trapped inside
+   a single project. Deliberately subtle (mono, small, low-contrast
+   until hover) so it reads as console chrome, not a second hero.
+   Reused as-is on both project detail pages (top bar under the hero,
+   plus a matching bar just above the generic site footer nav).
+   ========================================================================== */
+.project-topnav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.05em;
+}
+.project-topnav a { color: var(--ink-dim); transition: color 0.2s ease; }
+.project-topnav a:hover { color: var(--blue-deep); }
+.project-topnav-pos { color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.1em; }
+
+.project-bottomnav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding-top: 30px;
+  margin-top: 8px;
+  border-top: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+.project-bottomnav a { color: var(--ink); transition: color 0.2s ease; }
+.project-bottomnav a:hover { color: var(--blue-deep); }
+.project-bottomnav a.faint { color: var(--ink-faint); font-size: 12.5px; }
+
+.cs-nav-footer a.faint { color: var(--ink-faint); font-size: 12px; }
+.cs-nav-footer a.faint:hover { color: var(--blue-deep); }
+
+@media (max-width: 480px) {
+  .project-topnav-pos { order: 3; width: 100%; text-align: center; }
+}
+
+/* ==========================================================================
+   EVIDENCE PANELS — reuses .demo-frame's bar/media/caption layout
+   (already used for the Project 01 demo recording) so real screenshots
+   read as the same "exhibit" component, just laid out two-up.
+   ========================================================================== */
+.evidence-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 28px;
+}
+.evidence-grid .demo-frame { margin-top: 0; }
+.evidence-grid + .path-note { margin-top: 28px; }
+@media (max-width: 860px) {
+  .evidence-grid { grid-template-columns: 1fr; }
+}
+
+/* Grouped stage-by-stage explanation paragraphs under a flow diagram
+   (Project 02's "How It Works") — same .cs-body typography, just given
+   breathing room from the diagram above without a bare inline style. */
+.cs-detail-block { margin-top: 36px; display: flex; flex-direction: column; gap: 16px; }
+.cs-detail-block .cs-body { max-width: 68ch; }
+
+/* Repository CTA — the .btn primitive, given its own bottom margin so
+   it doesn't collide with the project-bottomnav directly beneath it. */
+.repo-cta { margin-bottom: 44px; }
+
+/* ==========================================================================
+   CHANGE TYPE CARDS — same visual language as .presence-card (border +
+   hard-shadow accent + mono label) but a 3-up grid describing the
+   categories of change this system detects, rather than a two-state
+   eligible/excluded comparison.
+   ========================================================================== */
+.change-type-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 26px; }
+.change-type-card {
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  background: var(--panel);
+  box-shadow: 4px 4px 0 var(--teal-tint);
+}
+.change-type-card .ctc-tag { margin-bottom: 12px; }
+.change-type-card h3 { font-size: 15.5px; margin: 0 0 8px; color: var(--ink); }
+.change-type-card p { font-size: 13.5px; color: var(--ink-dim); line-height: 1.7; margin: 0; }
+@media (max-width: 860px) {
+  .change-type-grid { grid-template-columns: 1fr; }
+}
+
+/* ==========================================================================
+   STATUS COLUMNS — "currently working" vs "not yet implemented", the
+   same panel/border language as .presence-card and .change-type-card
+   so the honesty-about-limitations section still feels like part of
+   this design system rather than a bolted-on disclaimer.
+   ========================================================================== */
+.status-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 26px; }
+.status-col {
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  background: var(--panel);
+}
+.status-col--working { border-top: 2px solid var(--teal); }
+.status-col--pending { border-top: 2px solid var(--border-strong); border-style: dashed; }
+.status-col h3 {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 0 0 14px;
+  color: var(--ink-faint);
+}
+.status-col--working h3 { color: var(--teal); }
+.status-col ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.status-col li {
+  font-size: 13.5px;
+  color: var(--ink-dim);
+  padding-left: 20px;
+  position: relative;
+  line-height: 1.6;
+}
+.status-col--working li::before {
+  content: "✓";
+  position: absolute; left: 0; top: 0;
+  color: var(--teal);
+  font-weight: 700;
+  font-size: 12px;
+}
+.status-col--pending li::before {
+  content: "—";
+  position: absolute; left: 0; top: 0;
+  color: var(--ink-faint);
+}
+@media (max-width: 700px) {
+  .status-columns { grid-template-columns: 1fr; }
+}

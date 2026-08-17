@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+<script>document.documentElement.classList.remove('no-js');</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Equibase Race-Day Change Informer — Project · Prem Rathod</title>
+<meta name="description" content="A working automation that monitors Equibase race-day data, detects meaningful operational changes, and delivers them as a report and a Slack notification.">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<link rel="stylesheet" href="../../assets/css/inner.css">
+<link rel="stylesheet" href="../../assets/css/home.css">
+<link rel="stylesheet" href="../../assets/css/case-study.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="loader" id="loader" aria-hidden="true">
+  <div class="loader-mark mono"><span>PREM</span><span>RATHOD</span></div>
+  <div class="loader-role">Technical / Application Support</div>
+  <div class="loader-bar"><span id="loaderFill"></span></div>
+</div>
+<div class="page-wipe" id="pageWipe" aria-hidden="true"></div>
+<div class="bg-atmosphere" aria-hidden="true"><span class="bg-atmosphere-grid"></span><span class="bg-atmosphere-glow"></span><span class="bg-atmosphere-grain"></span></div>
+
+<nav class="nav">
+  <div class="wrap">
+    <div class="nav-brand"><span class="nav-brand-mark" aria-hidden="true"><span class="dot"></span><span class="ring"></span></span><span class="nav-brand-name">PREM RATHOD</span></div>
+    <button class="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18" stroke-linecap="round"/></svg>
+    </button>
+    <div class="nav-links">
+      <a href="../../index.html">Home</a>
+      <a href="../../projects.html" class="active">Projects</a>
+      <a href="../../about.html">Profile</a>
+      <a href="../../contact.html">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<header class="cs-hero section-dark">
+  <div class="wrap">
+    <p class="eyebrow on-dark eyebrow-section reveal">Project 02 · Automation</p>
+    <h1 class="cs-title split-parent">
+      <span class="split-line"><span class="split-line-inner">Equibase Race-Day Change Informer</span></span>
+    </h1>
+    <p class="cs-sub reveal">A working automation that monitors Equibase race-day data, detects operationally meaningful changes — scratches, jockey swaps, track condition — and delivers them as a report and a Slack notification, without anyone having to watch the source page.</p>
+    <div class="cs-badges reveal">
+      <span class="tag teal">Repository: Public</span>
+      <span class="tag amber">Status: Working · In Progress</span>
+      <span class="tag blue">Output: Report + Slack Alert</span>
+      <span class="tag neutral">Tests: Automated</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="project-topnav mono" aria-label="Project navigation">
+    <a href="../slack-support-assistant/index.html">← Project 01 · Slack Support Assistant</a>
+    <span class="project-topnav-pos">Project 02 / 02</span>
+    <a href="../../projects.html">All Projects →</a>
+  </nav>
+</div>
+
+<div class="wrap cs-layout">
+
+  <aside class="checklist mono">
+    <span class="checklist-spine" aria-hidden="true"><span class="checklist-fill" id="checklistFill"></span></span>
+    <a href="#problem">Problem</a>
+    <a href="#built">What I Built</a>
+    <a href="#how-it-works">How It Works</a>
+    <a href="#evidence">Real Run</a>
+    <a href="#change-types">Types of Changes</a>
+    <a href="#status">Status &amp; Limitations</a>
+    <a href="#learned">What I Learned</a>
+  </aside>
+
+  <main class="cs-sections" id="main">
+
+    <section class="cs-section reveal" id="problem">
+      <p class="eyebrow">Problem</p>
+      <h2>Race-day details change all day — nobody can watch the source continuously.</h2>
+      <p class="cs-body">Scratches, jockey swaps, and track condition updates on Equibase happen throughout race day, often with little warning. Catching each one by manually re-checking the page means either checking constantly or missing changes until they're already stale. The system needs to watch the source on its own, work out which changes actually matter operationally, and surface only those — as a report and a Slack alert — instead of a wall of raw data.</p>
+    </section>
+
+    <section class="cs-section reveal" id="built">
+      <p class="eyebrow">What I Built</p>
+      <h2>An automated pipeline from raw Equibase data to a Slack alert.</h2>
+      <p class="cs-body">The project is organized into dedicated modules for data acquisition, parsing, change detection, reporting, and logging — its own <code>data/</code>, <code>reports/</code>, <code>logs/</code>, <code>src/</code>, and <code>tests/</code> directories, plus a persisted state file so each run only surfaces what's actually new. At a high level:</p>
+      <div class="pipeline-chain" aria-hidden="true">
+        <span class="pipeline-item"><span class="pipeline-step done"><span class="dot"></span>EQUIBASE DATA</span><span class="pipeline-arrow">→</span></span>
+        <span class="pipeline-item"><span class="pipeline-step done"><span class="dot"></span>XML SNAPSHOT</span><span class="pipeline-arrow">→</span></span>
+        <span class="pipeline-item"><span class="pipeline-step done"><span class="dot"></span>PARSE</span><span class="pipeline-arrow">→</span></span>
+        <span class="pipeline-item"><span class="pipeline-step done"><span class="dot"></span>CHANGE DETECTION</span><span class="pipeline-arrow">→</span></span>
+        <span class="pipeline-item"><span class="pipeline-step done"><span class="dot"></span>FILTER / GROUP</span><span class="pipeline-arrow">→</span></span>
+        <span class="pipeline-item"><span class="pipeline-step done"><span class="dot"></span>OPERATIONAL EVENTS</span><span class="pipeline-arrow">→</span></span>
+        <span class="pipeline-item"><span class="pipeline-step done"><span class="dot"></span>REPORT</span><span class="pipeline-arrow">→</span></span>
+        <span class="pipeline-item"><span class="pipeline-step done"><span class="dot"></span>SLACK</span></span>
+      </div>
+    </section>
+
+    <section class="cs-section reveal" id="how-it-works">
+      <p class="eyebrow">How It Works</p>
+      <h2>Each run moves through the same stages, in the same order.</h2>
+      <p class="cs-body">Scroll into this section and each stage lights up in the order it actually runs.</p>
+      <div class="flow-wrap">
+        <div class="flow">
+          <div class="flow-step"><span class="num">1</span><span class="label">Equibase race-day XML pulled and snapshotted</span></div>
+          <div class="flow-line"></div>
+          <div class="flow-step"><span class="num">2</span><span class="label">Snapshot parsed into structured entries</span></div>
+          <div class="flow-line"></div>
+          <div class="flow-step"><span class="num">3</span><span class="label">Parsed entries compared against persisted prior state</span></div>
+          <div class="flow-line"></div>
+          <div class="flow-step"><span class="num">4</span><span class="label">Raw differences filtered down to operationally meaningful changes</span></div>
+          <div class="flow-line"></div>
+          <div class="flow-step"><span class="num">5</span><span class="label">Related changes grouped into operational events</span></div>
+          <div class="flow-line"></div>
+          <div class="flow-step"><span class="num">6</span><span class="label">Report generated and written to file</span></div>
+          <div class="flow-line"></div>
+          <div class="flow-step"><span class="num">7</span><span class="label">State file updated for the next run</span></div>
+          <div class="flow-line"></div>
+          <div class="flow-step"><span class="num">8</span><span class="label">Slack notification sent, with delivery tracked by attempt</span></div>
+        </div>
+      </div>
+
+      <div class="cs-detail-block">
+        <p class="cs-body"><strong>Data acquisition &amp; parsing.</strong> Each run pulls the current Equibase race-day XML and parses it into structured per-race, per-horse entries the rest of the pipeline can compare.</p>
+        <p class="cs-body"><strong>Change detection.</strong> The parsed snapshot is compared against a state file persisted from the previous run — the log from a real run shows this explicitly: <em>"State updated successfully"</em> after each pass, so the next run only sees what's genuinely new.</p>
+        <p class="cs-body"><strong>Filtering &amp; grouping.</strong> Not every raw difference is worth a notification. In the same run, a track condition change at Prairie Meadows affected eleven races — the system grouped that into a single "Dirt Track Condition: Fast — Affected Races: 1–11" event rather than sending eleven near-duplicate alerts.</p>
+        <p class="cs-body"><strong>Reporting.</strong> Meaningful events are written out as a numbered operational report — track, race, horse, old value, new value, and a timestamp for each change — both to the terminal and to a persisted report file.</p>
+        <p class="cs-body"><strong>Notification.</strong> The report is delivered to a Slack channel via a dedicated app. The log line <em>"Slack notification sent successfully (attempt 1)"</em> shows delivery is tracked by attempt, not just fired and forgotten.</p>
+      </div>
+    </section>
+
+    <section class="cs-section reveal" id="evidence">
+      <p class="eyebrow">Real Run</p>
+      <h2>An actual run, not a mockup — six operational events, start to finish.</h2>
+      <p class="cs-body">DATA CHANGE → DETECTED EVENT → OPERATIONAL REPORT → SLACK NOTIFICATION. Below is the backend output and the resulting Slack message from the same run, on 2026-08-17.</p>
+
+      <div class="evidence-grid">
+        <div class="demo-frame">
+          <div class="demo-frame-bar">
+            <span>EXHIBIT A</span>
+            <span class="live-tag"><span class="status-dot"></span>TERMINAL</span>
+          </div>
+          <div class="demo-media">
+            <img src="../../assets/img/equibase-terminal-output.png" alt="VS Code terminal showing the Racing Data Monitor's generated operational report, listing scratch, track condition, and jockey change events">
+          </div>
+          <div class="demo-caption">terminal output · generated operational report</div>
+        </div>
+        <div class="demo-frame">
+          <div class="demo-frame-bar">
+            <span>EXHIBIT B</span>
+            <span class="live-tag"><span class="status-dot"></span>SLACK</span>
+          </div>
+          <div class="demo-media">
+            <img src="../../assets/img/equibase-slack-notification.png" alt="Slack message from the Equibase Race Day Change Informer app in the race-day-changes channel, listing the same operational changes">
+          </div>
+          <div class="demo-caption">#race-day-changes · sanitized trial workspace</div>
+        </div>
+      </div>
+
+      <p class="path-note mono">Real run · <span class="v">6 operational events</span> detected and delivered to Slack</p>
+      <div class="change-list">
+        <div class="change-list-row"><span class="ct">SCRATCH</span><span>Emerald Downs · Race 4 · I'm Ok (#1) — Not Scratched → Scratched</span></div>
+        <div class="change-list-row"><span class="ct">TRACK COND.</span><span>Prairie Meadows · Dirt: Fast · Races 1–11 (grouped)</span></div>
+        <div class="change-list-row"><span class="ct">JOCKEY</span><span>Prairie Meadows · Race 2 · Separannetta G (#7) — Mauro Jesus Rodriguez → Jarred Journet</span></div>
+        <div class="change-list-row"><span class="ct">JOCKEY</span><span>Prairie Meadows · Race 3 · Zoomin for Blood (#7) — Luis Luna Ramirez → Gonzalo R. Valles Jr.</span></div>
+        <div class="change-list-row"><span class="ct">JOCKEY</span><span>Prairie Meadows · Race 3 · Audreys Lil Cowgirl (#6) — Kody Kellenberger → Armando Alvidrez</span></div>
+        <div class="change-list-row"><span class="ct">JOCKEY</span><span>Prairie Meadows · Race 3 · Audreys Lil Cowgirl (#6) — Armando Alvidrez → Kody Kellenberger</span></div>
+      </div>
+      <p class="notify-line">CHANGES DETECTED → SLACK NOTIFICATION SENT (ATTEMPT 1)</p>
+    </section>
+
+    <section class="cs-section reveal" id="change-types">
+      <p class="eyebrow">Types of Changes</p>
+      <h2>Three categories of operational change, currently detected.</h2>
+      <p class="cs-body">Based on the demonstrated run, the system currently recognizes these change types:</p>
+      <div class="change-type-grid stagger-group">
+        <div class="change-type-card stagger-item">
+          <span class="tag coral ctc-tag">Scratch</span>
+          <h3>Scratch</h3>
+          <p>A horse's status flips from "Not Scratched" to "Scratched" — the entry is withdrawn from the race, with a reason field if one is available.</p>
+        </div>
+        <div class="change-type-card stagger-item">
+          <span class="tag amber ctc-tag">Jockey Change</span>
+          <h3>Jockey Change</h3>
+          <p>The rider assigned to a horse is swapped for another, tracked as an old-rider-to-new-rider change per horse and race. The same horse can change jockeys more than once in a single run.</p>
+        </div>
+        <div class="change-type-card stagger-item">
+          <span class="tag teal ctc-tag">Track Condition</span>
+          <h3>Track Condition Change</h3>
+          <p>The track surface condition changes (e.g. dirt to "Fast") and can apply across many races at once — the system groups this into a single event rather than one alert per affected race.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="cs-section reveal" id="status">
+      <p class="eyebrow">Status &amp; Limitations</p>
+      <h2>An honest read on where this stands.</h2>
+      <p class="cs-body">This is a working, in-progress automation — not a finished product. Being upfront about what's built versus what isn't is intentional, since this is a portfolio.</p>
+      <div class="status-columns">
+        <div class="status-col status-col--working">
+          <h3>Currently Working</h3>
+          <ul>
+            <li>Race-day data monitoring &amp; snapshotting</li>
+            <li>Change detection against persisted prior state</li>
+            <li>Filtering &amp; grouping of operational events</li>
+            <li>Report generation (terminal + report file)</li>
+            <li>Slack notification with delivery-attempt tracking</li>
+            <li>Automated tests</li>
+          </ul>
+        </div>
+        <div class="status-col status-col--pending">
+          <h3>Not Yet Implemented</h3>
+          <ul>
+            <li>Internal Site Compare — not yet implemented</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="cs-section reveal" id="learned">
+      <p class="eyebrow">What I Learned</p>
+      <h2>Deciding what's "meaningful" is harder than detecting a change.</h2>
+      <p class="cs-body">Raw diffs against a changing external data source are noisy — the real work is filtering and grouping them into events a human would actually want a Slack alert for, like collapsing eleven per-race track-condition diffs into one grouped notification instead of eleven near-identical ones. Persisting state between runs turned out to matter just as much as detection logic itself, since it's what keeps each run reporting only what's new rather than the entire dataset. And tracking notification delivery by attempt, rather than firing a message and moving on, was a small addition that makes the difference between "probably sent" and "confirmed sent."</p>
+    </section>
+
+  </main>
+
+</div>
+
+<div class="wrap">
+  <a href="https://github.com/prem0711-12/equibase-race-day-change-informer" class="btn btn-primary repo-cta" target="_blank" rel="noopener">View the repository →</a>
+  <div class="project-bottomnav">
+    <a href="../slack-support-assistant/index.html">← Project 01 · Slack Support Assistant</a>
+    <a href="../../projects.html">Back to All Projects →</a>
+  </div>
+  <div class="cs-nav-footer">
+    <a href="../../index.html" class="faint">← Back to home</a>
+    <a href="../../about.html" class="faint">About me →</a>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>© Prem Rathod</span>
+    <span><a href="https://github.com/prem0711-12" target="_blank" rel="noopener">GitHub</a> · <a href="https://linkedin.com/in/premrathodtech" target="_blank" rel="noopener">LinkedIn</a></span>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="../../assets/js/main.js"></script>
+</body>
+</html>

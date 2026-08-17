@@ -1,0 +1,157 @@
+.inner-hero {
+  padding: 64px 0 56px;
+  border-bottom: 1px solid var(--graphite-line);
+}
+.inner-title { font-size: clamp(32px, 4.2vw, 50px); margin: 18px 0 20px; letter-spacing: -0.025em; color: var(--on-graphite); }
+.inner-lede { color: var(--on-graphite-dim); font-size: 17px; line-height: 1.75; max-width: 62ch; }
+
+.inner-page { padding: 68px 0 100px; max-width: 880px; }
+.inner-block { margin-top: 58px; }
+.inner-block:first-child { margin-top: 0; }
+.inner-block h2 { font-size: 22px; margin-bottom: 16px; }
+.cs-body { color: var(--ink-dim); line-height: 1.8; font-size: 15.5px; max-width: 68ch; }
+
+.skills-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin-top: 8px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+.skills-grid > div { background: var(--panel); padding: 22px; }
+.skills-h {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.05em;
+  color: var(--blue-deep);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.timeline-note {
+  border-left: 2px solid var(--border-strong);
+  padding-left: 20px;
+  margin-top: 8px;
+}
+
+/* about — opening statement treatment: the section's existing first
+   sentence set larger as a statement, the rest as supporting text, so the
+   page reads as "the person behind the investigations" rather than a
+   generic About Me block with a heading. */
+.about-statement {
+  font-family: var(--font-display);
+  font-size: clamp(21px, 2.5vw, 29px);
+  line-height: 1.45;
+  font-weight: 500;
+  color: var(--ink);
+  max-width: 62ch;
+  margin: 6px 0 18px;
+}
+.about-support { max-width: 58ch; }
+
+/* contact — closing composition: a deliberate end-of-experience mark
+   rather than the page simply stopping after the contact cards. */
+.closing-mark {
+  margin-top: 64px;
+  padding-top: 30px;
+  border-top: 1px dashed var(--border-strong);
+  font-family: var(--font-mono);
+}
+.closing-mark span { display: block; text-transform: uppercase; }
+.closing-mark .line-1 { font-size: 14px; letter-spacing: 0.06em; color: var(--ink); font-weight: 600; }
+.closing-mark .line-2 { font-size: 11px; letter-spacing: 0.1em; color: var(--ink-faint); margin-top: 6px; }
+
+.cs-nav-footer {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 36px;
+  margin-top: 60px;
+  border-top: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.cs-nav-footer a:hover { color: var(--blue-deep); }
+
+/* contact — small mono kicker above the channel list, same rule-line
+   language as .eyebrow-section elsewhere, so the grid below reads as
+   "these are direct channels" rather than three unlabeled cards. */
+.contact-kicker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin: 40px 0 16px;
+}
+.contact-kicker::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--border-strong), transparent);
+  min-width: 24px;
+}
+
+/* Cards follow the same icon-circle + label/value + arrow layout as
+   .archive-dest on the homepage, rather than a new pattern — same
+   border/hover language (translate + hard shadow), just carrying an
+   icon and an interaction affordance instead of plain text. */
+.contact-grid { display: grid; gap: 14px; margin-top: 0; max-width: 560px; }
+.contact-card {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 18px 20px;
+  background: var(--panel);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.contact-card:hover, .contact-card:focus-visible { transform: translate(-2px, -2px); box-shadow: 4px 4px 0 var(--amber); border-color: var(--ink); }
+
+.contact-icon {
+  flex-shrink: 0;
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  border: 1px solid var(--border-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s ease;
+}
+.contact-icon svg { width: 20px; height: 20px; display: block; }
+.contact-card:hover .contact-icon, .contact-card:focus-visible .contact-icon { border-color: var(--ink); }
+/* Real brand colors on the mark itself (kept off everything else on
+   the card) — this is what makes each icon read as "Gmail" / "LinkedIn"
+   / "GitHub" at a glance rather than three identical generic glyphs. */
+.contact-icon--gmail svg { color: #ea4335; }
+.contact-icon--linkedin svg { color: #0a66c2; }
+.contact-icon--github svg { color: var(--ink); }
+
+.contact-lbl-wrap { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.contact-lbl { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); }
+.contact-value { font-size: 15px; color: var(--ink); font-family: var(--font-mono); word-break: break-word; }
+
+.contact-arrow {
+  margin-left: auto;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--border-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-dim);
+  transition: transform 0.3s var(--ease), color 0.25s ease, border-color 0.25s ease;
+  flex-shrink: 0;
+}
+.contact-arrow svg { width: 15px; height: 15px; display: block; }
+.contact-card:hover .contact-arrow, .contact-card:focus-visible .contact-arrow { transform: rotate(45deg); color: var(--blue); border-color: var(--blue); }
+
+.contact-note { margin-top: 36px; }
+
+@media (max-width: 480px) {
+  .contact-card { gap: 14px; padding: 16px; }
+  .contact-arrow { display: none; }
+}
+
+@media (max-width: 760px) {
+  .skills-grid { grid-template-columns: 1fr; }
+}

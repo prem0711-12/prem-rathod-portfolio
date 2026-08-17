@@ -1,0 +1,223 @@
+/* ==========================================================================
+   PROJECTS PAGE — project selector + two static project panels.
+   Reuses existing primitives (.eyebrow, .tag, .btn, .pipeline-chain,
+   .change-list, .notify-line, .path-note) and the same status-panel /
+   project-copy layout already established on the Home page's Project 02
+   card, so this page reads as the same design system rather than a new
+   one. Only what's genuinely new here — the switcher and the panel
+   crossfade — gets its own rules.
+   ========================================================================== */
+
+.projects-intro { padding: 68px 0 8px; }
+
+/* ---------- project index (project navigator) ----------
+   A numbered index rather than a tab bar: large mono numbers, a
+   title/meta stack, and a single indicator segment that slides
+   between items instead of each item carrying its own border/
+   background. Flex + wrap (not a hard-coded 2-up grid) so a future
+   03/04 item just adds another entry in the row; the indicator is
+   positioned in JS off each button's real bounding box, so it works
+   regardless of how many items there are or where they wrap. */
+.project-switch {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 44px;
+  border-bottom: 1px solid var(--border);
+}
+.project-switch-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  flex: 1 1 260px;
+  padding: 4px 22px 26px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+}
+.project-switch-item:first-child { padding-left: 0; }
+/* Divider between number and title/meta — a short vertical rule,
+   not a boxed card edge, so the whole thing reads as one continuous
+   index rather than stacked buttons. */
+.psw-divider {
+  width: 1px;
+  height: 34px;
+  margin-top: 3px;
+  background: var(--border-strong);
+  flex-shrink: 0;
+  transition: background 0.25s var(--ease-soft);
+}
+.psw-idx {
+  font-family: var(--font-mono);
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--ink-faint);
+  flex-shrink: 0;
+  transition: color 0.25s var(--ease-soft), transform 0.25s var(--ease-soft);
+}
+.psw-body { display: flex; flex-direction: column; gap: 8px; min-width: 0; padding-top: 2px; }
+.psw-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--ink-dim);
+  letter-spacing: -0.01em;
+  transition: color 0.25s var(--ease-soft), transform 0.25s var(--ease-soft);
+}
+/* Small reveal-on-hover arrow — signals "go here" without any scale
+   or cursor-following motion. */
+.psw-arrow {
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity 0.2s var(--ease-soft), transform 0.2s var(--ease-soft);
+}
+.psw-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+}
+/* Status dot preceding the meta line — filled only once a project is
+   active, echoing the "● Prototype · Private repository" reference
+   treatment rather than a plain bottom border. */
+.psw-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--border-strong);
+  flex-shrink: 0;
+  transition: background 0.25s var(--ease-soft), box-shadow 0.25s var(--ease-soft);
+}
+
+/* Hover — subtle nudge + arrow reveal only, never on the active item. */
+.project-switch-item:not(.active):hover .psw-idx,
+.project-switch-item:not(.active):hover .psw-title { transform: translateX(3px); }
+.project-switch-item:not(.active):hover .psw-title { color: var(--ink); }
+.project-switch-item:not(.active):hover .psw-arrow { opacity: 0.5; transform: translateX(0); }
+.project-switch-item:not(.active):hover .psw-idx { color: var(--ink-dim); }
+
+/* Active state — number + title read as "selected"; the sliding
+   .psw-indicator (positioned in JS) is what actually shows which
+   item is active, but the color/weight shift here reinforces it
+   even before the indicator finishes moving. */
+.project-switch-item.active .psw-title { color: var(--ink); }
+.project-switch-item.active .psw-divider { background: var(--ink-faint); }
+/* Project 01 accent = blue, Project 02 accent = teal — matching each
+   project's own status-panel accent below. Add one more pair like
+   this per future project; until then a new item just falls back to
+   the generic ink-faint indicator color set in JS. */
+.project-switch-item[data-accent="blue"].active .psw-idx { color: var(--blue-deep); }
+.project-switch-item[data-accent="blue"].active .psw-dot { background: var(--blue); box-shadow: 0 0 0 3px var(--blue-tint); }
+.project-switch-item[data-accent="teal"].active .psw-idx { color: var(--teal); }
+.project-switch-item[data-accent="teal"].active .psw-dot { background: var(--teal); box-shadow: 0 0 0 3px var(--teal-tint); }
+
+/* Sliding indicator segment — position/width (desktop) or
+   position/height (mobile) are set inline via JS from each button's
+   real bounding box, so this works for any number of items. Only
+   left/width/top/height/background transition; those are cheap and
+   skip entirely under reduced motion via the global rule in style.css. */
+.psw-indicator {
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 0;
+  height: 2px;
+  background: var(--ink-faint);
+  transition: left 0.36s var(--ease-soft), width 0.36s var(--ease-soft), top 0.36s var(--ease-soft), height 0.36s var(--ease-soft), background 0.25s ease;
+}
+.psw-indicator.ind-blue { background: var(--blue); }
+.psw-indicator.ind-teal { background: var(--teal); }
+
+@media (max-width: 640px) {
+  .project-switch { flex-direction: column; border-bottom: none; }
+  .project-switch-item { padding: 16px 0 16px 22px; }
+  .project-switch-item:first-child { padding-left: 22px; }
+  .psw-indicator { bottom: auto; width: 2px; height: 0; }
+}
+
+/* ---------- project panels ---------- */
+.project-panels { padding: 48px 0 100px; }
+/* Each panel reuses the Home page's .project-card grid + evidence
+   components as-is (see home.css) — the only override needed is the
+   top rule/padding those carry on Home to separate Project 02 from
+   Project 01 above it in one continuous scroll. Here each panel is
+   shown on its own, so that top border would just float with nothing
+   above it. */
+.project-panel .project-card { border-top: none; padding-top: 0; }
+/* Project 01's status panel reuses .project-card-status (the static,
+   non-scrubbed status-panel component) rather than .case-cinema-status
+   (which defaults to opacity:0, only ever animated to visible by the
+   Home page's scroll-scrubbed timeline in home.js — reusing it here
+   with no matching JS would leave the panel permanently invisible).
+   This modifier just swaps the top accent back to blue, matching
+   Project 01's accent everywhere else on the site. */
+.project-card-status--blue { border-top-color: var(--blue); }
+
+/* Directional switch transition (transform/opacity only, so it stays
+   cheap and never touches the GSAP/Lenis-owned scroll timelines
+   elsewhere on the site). The outgoing panel slides out toward the
+   side the newly-selected project sits on; the incoming panel enters
+   from that same side, so switching feels spatial rather than a flat
+   crossfade. Direction classes are added/removed in JS based on each
+   item's position in the switch, not hard-coded to proj-01/proj-02,
+   so a future proj-03 needs no changes here. Skipped entirely under
+   reduced motion via the global rule in style.css, which zeroes all
+   transition durations — projects.js also shortcuts the JS-side
+   timing so nothing sits mid-transition for no visible reason. */
+.project-panel {
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 0.28s var(--ease-soft), transform 0.28s var(--ease-soft);
+}
+.project-panel.dir-exit-next { opacity: 0; transform: translateX(-18px); }
+.project-panel.dir-exit-prev { opacity: 0; transform: translateX(18px); }
+.project-panel.dir-enter-next { opacity: 0; transform: translateX(18px); }
+.project-panel.dir-enter-prev { opacity: 0; transform: translateX(-18px); }
+
+/* Inner stagger on entry only — title → description → tags →
+   pipeline → CTA → metadata panel → evidence strip cascade in a beat
+   apart, riding on top of the directional slide above. Each element
+   keeps its own opacity/transform so the stagger and the panel-level
+   slide can run at the same time without fighting each other. */
+.project-panel .project-card-idx,
+.project-panel .project-card-title,
+.project-panel .project-card-desc,
+.project-panel .project-card-tags,
+.project-panel .pipeline-chain,
+.project-panel .project-card-copy > .btn,
+.project-panel .project-card-status,
+.project-panel .project-card-evidence {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.34s var(--ease-soft), transform 0.34s var(--ease-soft);
+}
+.project-panel.dir-enter-next .project-card-idx,
+.project-panel.dir-enter-prev .project-card-idx { opacity: 0; transform: translateY(8px); transition-delay: 0ms; }
+.project-panel.dir-enter-next .project-card-title,
+.project-panel.dir-enter-prev .project-card-title { opacity: 0; transform: translateY(8px); transition-delay: 40ms; }
+.project-panel.dir-enter-next .project-card-desc,
+.project-panel.dir-enter-prev .project-card-desc { opacity: 0; transform: translateY(8px); transition-delay: 75ms; }
+.project-panel.dir-enter-next .project-card-tags,
+.project-panel.dir-enter-prev .project-card-tags { opacity: 0; transform: translateY(8px); transition-delay: 110ms; }
+.project-panel.dir-enter-next .pipeline-chain,
+.project-panel.dir-enter-prev .pipeline-chain { opacity: 0; transform: translateY(8px); transition-delay: 145ms; }
+.project-panel.dir-enter-next .project-card-copy > .btn,
+.project-panel.dir-enter-prev .project-card-copy > .btn { opacity: 0; transform: translateY(8px); transition-delay: 180ms; }
+.project-panel.dir-enter-next .project-card-status,
+.project-panel.dir-enter-prev .project-card-status { opacity: 0; transform: translateY(8px); transition-delay: 100ms; }
+.project-panel.dir-enter-next .project-card-evidence,
+.project-panel.dir-enter-prev .project-card-evidence { opacity: 0; transform: translateY(8px); transition-delay: 200ms; }
+
+@media (max-width: 860px) {
+  .projects-intro { padding-top: 56px; }
+}

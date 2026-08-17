@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+<script>document.documentElement.classList.remove('no-js');</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slack Support Assistant — Project · Prem Rathod</title>
+<meta name="description" content="AI-assisted support workflow prototype: presence-aware assignment, round-robin routing, and reviewed AI response drafting.">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<link rel="stylesheet" href="../../assets/css/inner.css">
+<link rel="stylesheet" href="../../assets/css/case-study.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="loader" id="loader" aria-hidden="true">
+  <div class="loader-mark mono"><span>PREM</span><span>RATHOD</span></div>
+  <div class="loader-role">Technical / Application Support</div>
+  <div class="loader-bar"><span id="loaderFill"></span></div>
+</div>
+<div class="page-wipe" id="pageWipe" aria-hidden="true"></div>
+<div class="bg-atmosphere" aria-hidden="true"><span class="bg-atmosphere-grid"></span><span class="bg-atmosphere-glow"></span><span class="bg-atmosphere-grain"></span></div>
+
+<nav class="nav">
+  <div class="wrap">
+    <div class="nav-brand"><span class="nav-brand-mark" aria-hidden="true"><span class="dot"></span><span class="ring"></span></span><span class="nav-brand-name">PREM RATHOD</span></div>
+    <button class="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18" stroke-linecap="round"/></svg>
+    </button>
+    <div class="nav-links">
+      <a href="../../index.html">Home</a>
+      <a href="../../projects.html" class="active">Projects</a>
+      <a href="../../about.html">Profile</a>
+      <a href="../../contact.html">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<header class="cs-hero section-dark">
+  <div class="wrap">
+    <p class="eyebrow on-dark eyebrow-section reveal">Project 01</p>
+    <h1 class="cs-title split-parent">
+      <span class="split-line"><span class="split-line-inner">Slack Support Assistant</span></span>
+    </h1>
+    <p class="cs-sub reveal">An AI-assisted workflow prototype exploring how incoming Slack support conversations could be triaged, routed to an available engineer, and answered faster — with a human always reviewing before anything is sent.</p>
+    <div class="cs-badges reveal">
+      <span class="tag neutral">Repository: Private</span>
+      <span class="tag blue">Status: Prototype</span>
+      <span class="tag coral">Production Use: No</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="project-topnav mono" aria-label="Project navigation">
+    <a href="../../projects.html">← All Projects</a>
+    <span class="project-topnav-pos">Project 01 / 02</span>
+    <a href="../equibase-race-day-informer/index.html">Project 02 · Equibase Race-Day Change Informer →</a>
+  </nav>
+</div>
+
+<div class="wrap cs-layout">
+
+  <aside class="checklist mono">
+    <span class="checklist-spine" aria-hidden="true"><span class="checklist-fill" id="checklistFill"></span></span>
+    <a href="#problem">Problem</a>
+    <a href="#approach">Approach</a>
+    <a href="#workflow">Workflow</a>
+    <a href="#availability">Availability Logic</a>
+    <a href="#demo">Demo</a>
+    <a href="#logs">System Output</a>
+    <a href="#learnings">What I Learned</a>
+    <a href="#limitations">Limitations</a>
+  </aside>
+
+  <main class="cs-sections" id="main">
+
+    <section class="cs-section reveal" id="problem">
+      <p class="eyebrow">Problem</p>
+      <h2>Manual triage doesn't scale, and it doesn't check who's actually around.</h2>
+      <p class="cs-body">Support teams handling incoming Slack conversations often assign requests manually — whoever notices the message first, or whoever's turn it "feels like" it is. There's rarely a consistent check on whether the person being assigned is actually available before a new conversation lands in their queue. That gap is where response times slip.</p>
+    </section>
+
+    <section class="cs-section reveal" id="approach">
+      <p class="eyebrow">Approach</p>
+      <h2>Prototype the decision logic, not just the chat interface.</h2>
+      <p class="cs-body">I designed a workflow where a new Slack conversation is detected automatically, routed to an available engineer using round-robin logic, and tracked through acknowledgement and response. AI assists the assigned engineer's response drafting — it does not communicate with the customer independently. <strong>I defined the problem, workflow, assignment logic, and testing scenarios; AI-assisted tooling helped build the implementation.</strong></p>
+    </section>
+
+    <section class="cs-section reveal" id="workflow">
+      <p class="eyebrow">Workflow</p>
+      <h2>From message to sent response, every state is tracked.</h2>
+      <p class="cs-body">Scroll into this section and each stage lights up in the order it actually happens in the prototype. You can also replay it on demand below.</p>
+      <div class="flow-wrap">
+        <div class="flow">
+          <div class="flow-step"><span class="num">1</span><span class="label">Customer submits request in Slack</span></div>
+          <div class="flow-line"></div>
+          <div class="flow-step"><span class="num">2</span><span class="label">Conversation created automatically</span></div>
+          <div class="flow-line"></div>
+          <div class="flow-step"><span class="num">3</span><span class="label">Engineer availability checked (Slack presence)</span></div>
+          <div class="flow-line"></div>
+          <div class="flow-step"><span class="num">4</span><span class="label">Round-robin assignment</span></div>
+          <div class="flow-line"></div>
+          <div class="flow-step"><span class="num">5</span><span class="label">Customer acknowledgement sent</span></div>
+          <div class="flow-line"></div>
+          <div class="flow-step"><span class="num">6</span><span class="label">Engineer reviews conversation</span></div>
+          <div class="flow-line"></div>
+          <div class="flow-step"><span class="num">7</span><span class="label">AI-assisted response draft generated</span></div>
+          <div class="flow-line"></div>
+          <div class="flow-step branch"><span class="num">8</span><span class="label">Engineer edits / regenerates / rejects</span></div>
+          <div class="flow-line"></div>
+          <div class="flow-step"><span class="num">9</span><span class="label">Engineer approves → response sent as assigned engineer</span></div>
+          <div class="flow-line"></div>
+          <div class="flow-step"><span class="num">10</span><span class="label">Conversation state tracked to close</span></div>
+        </div>
+        <div class="sim-controls">
+          <button class="btn" id="runSimBtn" type="button">▶ Run workflow simulation</button>
+          <span class="sim-readout mono">Status: <span class="state" id="simState">Idle</span></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="cs-section reveal" id="availability">
+      <p class="eyebrow">Availability Logic</p>
+      <h2>Presence-aware routing, not just a static schedule.</h2>
+      <p class="cs-body">Before assignment, the prototype checks each engineer's real-time Slack presence. Engineers marked away are excluded from that round's eligible pool — this is the specific piece of decision logic I was most interested in testing.</p>
+      <div class="presence-grid mono stagger-group">
+        <div class="presence-card eligible stagger-item">
+          <div class="name">Prem</div>
+          <div class="stat"><span class="dot"></span>presence = active</div>
+          <div class="stat result">→ eligible</div>
+        </div>
+        <div class="presence-card excluded stagger-item">
+          <div class="name">Aditya</div>
+          <div class="stat"><span class="dot"></span>presence = away</div>
+          <div class="stat result">→ excluded</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cs-section reveal" id="demo">
+      <p class="eyebrow">Demo</p>
+      <h2>The prototype, running end to end.</h2>
+      <p class="cs-body">Screen recording of the flow above: a new conversation comes in, availability is checked, an AI-suggested reply is generated, and the engineer approves and sends it.</p>
+      <div class="demo-frame">
+        <div class="demo-frame-bar">
+          <span>LIVE PROTOTYPE / DEMONSTRATION</span>
+          <span class="live-tag"><span class="status-dot"></span>RECORDED</span>
+        </div>
+        <div class="demo-media">
+          <img src="../../assets/img/slack-support-assistant-demo.gif" alt="Slack Support Assistant demo — new conversation, availability check, AI-suggested reply, approve and send">
+          <span class="demo-scan" aria-hidden="true"></span>
+        </div>
+        <div class="demo-caption">slack-support-assistant-demo.gif · sanitized trial workspace</div>
+      </div>
+      <div class="demo-tags reveal">
+        <span class="tag blue">Round-robin assignment</span>
+        <span class="tag teal">Presence-aware routing</span>
+        <span class="tag amber">AI-assisted drafting</span>
+      </div>
+      <p class="demo-note">This is the actual prototype running in a sanitized trial Slack workspace — not a mockup. No real customer information, credentials, or internal URLs are shown.</p>
+    </section>
+
+    <section class="cs-section reveal" id="logs">
+      <p class="eyebrow">System Output</p>
+      <h2>What the backend actually reports.</h2>
+      <p class="cs-body">Sanitized log excerpt from a test run — no real customer data, tokens, or credentials.</p>
+      <div class="terminal">
+        <div class="terminal-bar"><span>EXHIBIT A</span><span>system.log</span></div>
+        <pre>Engineer availability check:
+Prem       presence=active   -&gt; <span class="ok">eligible</span>
+Aditya     presence=away     -&gt; <span class="muted">excluded</span>
+
+New Conversation
+Assigned Engineer: Prem
+Status: <span class="ok">ASSIGNED</span>
+
+Conversation Acknowledged
+Acknowledged By: Prem
+Status: <span class="ok">ACKNOWLEDGED</span></pre>
+      </div>
+    </section>
+
+    <section class="cs-section reveal" id="learnings">
+      <p class="eyebrow">What I Learned</p>
+      <h2>The decision logic is the hard part — not the AI generation step.</h2>
+      <p class="cs-body">Building this clarified how much of "support automation" is really about designing decision logic: who's eligible, when to escalate, when to hand control back to a human. The AI drafting step is comparatively the easy part — keeping a human in the approval loop for every outbound message was the design decision that mattered most.</p>
+    </section>
+
+    <section class="cs-section reveal" id="limitations">
+      <p class="eyebrow">Limitations & Next Steps</p>
+      <h2>An honest read on where this stands.</h2>
+      <p class="cs-body">This is a personal prototype, not a production deployment — it hasn't been tested at scale, doesn't yet handle multi-channel routing, and the assignment logic is intentionally simple (round-robin, not load- or skill-based). Repository is private; implementation details available on request.</p>
+    </section>
+
+  </main>
+
+</div>
+
+<div class="wrap">
+  <div class="project-bottomnav">
+    <a href="../../projects.html">← Back to All Projects</a>
+    <a href="../equibase-race-day-informer/index.html">Project 02 · Equibase Race-Day Change Informer →</a>
+  </div>
+  <div class="cs-nav-footer">
+    <a href="../../index.html" class="faint">← Back to home</a>
+    <a href="../../about.html" class="faint">About me →</a>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>© Prem Rathod</span>
+    <span><a href="https://github.com/prem0711-12" target="_blank" rel="noopener">GitHub</a> · <a href="https://linkedin.com/in/premrathodtech" target="_blank" rel="noopener">LinkedIn</a></span>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="../../assets/js/main.js"></script>
+</body>
+</html>

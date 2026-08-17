@@ -1,0 +1,723 @@
+/* ==========================================================================
+   PREM RATHOD — "Investigation Console" design system v2
+   Concept: the site is structured like the pipeline of a real investigation —
+   Signal → Impact → Investigation → Evidence → Root Cause → Resolution →
+   Prevention — expressed as a dark technical "console" chrome (nav, hero,
+   footer) wrapping calm, editorial reading panels for the actual content.
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+:root {
+  /* -- graphite chrome (nav / hero / footer / dark panels) -- */
+  --graphite: #0c0e12;
+  --graphite-2: #14171d;
+  --graphite-3: #1c2028;
+  --graphite-line: rgba(255,255,255,0.10);
+  --graphite-line-strong: rgba(255,255,255,0.18);
+  --on-graphite: #f2f1ec;
+  --on-graphite-dim: #9aa0aa;
+  --on-graphite-faint: #676d78;
+
+  /* -- paper (reading sections) — cool graphite off-white, not cream.
+     Centralized here only; every section/component below reads these
+     via var(--paper)/var(--panel)/var(--border*) rather than its own
+     hex value (verified — nothing else in the CSS hardcodes these). -- */
+  --paper: #eeeeeb;
+  --panel: #f8f8f5;
+  --border: #dededa;
+  --border-strong: #c7c7c0;
+  --ink: #16181c;
+  --ink-dim: #5b5f68;
+  --ink-faint: #93989f;
+
+  /* -- signal accents -- */
+  --blue: #3159e8;
+  --blue-deep: #1f3ea8;
+  --blue-tint: #e8ecfd;
+  --blue-tint-dark: rgba(49,89,232,0.18);
+  --teal: #147d67;
+  --teal-tint: #dcf1ea;
+  --teal-tint-dark: rgba(20,157,125,0.18);
+  --amber: #b9750f;
+  --amber-tint: #f7e9cd;
+  --amber-tint-dark: rgba(212,150,45,0.18);
+  --coral: #b3402a;
+  --coral-tint: #f6e0da;
+  --coral-tint-dark: rgba(214,92,66,0.18);
+
+  --font-display: 'Space Grotesk', 'Inter', -apple-system, sans-serif;
+  --font-sans: 'Inter', -apple-system, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', monospace;
+
+  --radius: 6px;
+  --radius-lg: 10px;
+  --maxw: 1180px;
+  --gutter: clamp(22px, 5vw, 64px);
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-soft: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+html.lenis, html.lenis body { height: auto; }
+html.lenis-smooth { scroll-behavior: auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  cursor: default;
+}
+
+/* subtle film-grain texture for dark chrome panels — cheap, GPU-friendly */
+.section-dark, .console, .demo-frame, .terminal, .nav {
+  position: relative;
+}
+.grain-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ==========================================================================
+   GLOBAL BACKGROUND ATMOSPHERE — one shared, page-wide "the system is
+   alive" layer, used behind every page (not just the hero). Sits at
+   z-index:-1 so it paints behind body's normal in-flow content without
+   taking part in layout or scroll (position:fixed, no height/measure
+   cost, no JS). Only `transform` is animated (GPU-composited), and the
+   whole layer is pointer-events:none so it can never intercept clicks,
+   steal focus, or sit above ScrollTrigger-pinned content. Extremely low
+   opacity by design — it should read as texture, not decoration.
+   ========================================================================== */
+.bg-atmosphere {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+  background: var(--paper);
+  /* Isolates this layer's rendering from the rest of the page — the
+     browser doesn't need to consider it when recalculating style/
+     layout/paint for scrolled content, and vice versa. */
+  contain: strict;
+}
+.bg-atmosphere-grid {
+  position: absolute;
+  inset: 0;
+  display: block;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 68px 68px;
+  opacity: 0.4;
+  -webkit-mask-image: radial-gradient(ellipse 75% 55% at 50% 8%, #000 25%, transparent 72%);
+          mask-image: radial-gradient(ellipse 75% 55% at 50% 8%, #000 25%, transparent 72%);
+}
+/* Simplified from 3 radial-gradients + a scale animation down to 2 +
+   a translate-only drift. Diagnosis: this element didn't cause
+   per-frame *repaint* on its own (only `transform` was animated,
+   which is compositor-only) — but `scale()` continuously resizes the
+   compositor layer's effective bounds every frame, and it sat right
+   underneath a `mix-blend-mode: overlay` grain layer (see below),
+   which together forced the browser to keep re-flattening the blend
+   each frame instead of treating the two as independent GPU layers.
+   Removing the blend mode was the actual fix; this trim (one fewer
+   gradient, translate-only motion, no oversized inset) is extra
+   headroom on top of that, not the primary cause. */
+.bg-atmosphere-glow {
+  position: absolute;
+  inset: -10% 0 0 0;
+  display: block;
+  background:
+    radial-gradient(circle at 22% 18%, rgba(49,89,232,0.05), transparent 55%),
+    radial-gradient(circle at 78% 62%, rgba(20,125,103,0.045), transparent 58%);
+  will-change: transform;
+  animation: atmosphere-drift 60s ease-in-out infinite alternate;
+}
+/* Grain: previously reused `.grain-layer`, which applies
+   `mix-blend-mode: overlay`. On a full-viewport fixed layer sitting
+   behind every pinned/scrubbed section, that blend mode was the main
+   source of the reported choppiness — blend modes stop the browser
+   from compositing this layer independently on the GPU, so it had to
+   be re-flattened against the (animating) glow layer beneath it on
+   every frame, on top of whatever ScrollTrigger was already doing
+   that frame. Same static noise texture, same visual weight at this
+   opacity, but painted normally (no blend) so it costs nothing after
+   its one-time initial paint. */
+.bg-atmosphere-grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.02;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+@keyframes atmosphere-drift {
+  0%   { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-2%, 1.5%, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bg-atmosphere-glow { animation: none; }
+}
+/* Keep the atmosphere out of the way on very short/low-power viewports
+   where it would add more paint cost than atmosphere — cheap insurance,
+   not a real-world concern at this opacity, but a free safeguard. */
+@media (max-width: 480px) {
+  .bg-atmosphere-grid { background-size: 48px 48px; }
+}
+
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; }
+
+:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+h1, h2, h3, h4 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+p { margin: 0; }
+
+.mono { font-family: var(--font-mono); }
+
+.wrap {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+  position: relative;
+  z-index: 1;
+}
+
+/* ---------- nav ---------- */
+/* Part of normal document flow (not sticky/fixed) — it scrolls away
+   with the page so content can take the full viewport beneath it. */
+.nav {
+  position: relative;
+  z-index: 100;
+  background: var(--graphite);
+  border-bottom: 1px solid var(--graphite-line);
+  box-shadow: 0 14px 28px -22px rgba(0,0,0,0.55);
+}
+/* Depth/separation from the hero beneath it — a very faint bottom
+   glow plus a soft downward shadow, so the nav reads as a slightly
+   raised console strip rather than a flat bar with a hairline. Kept
+   to a single static gradient (no animation, no blur filter) so it
+   costs nothing beyond its one-time paint. */
+.nav::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(111,224,190,0.35), transparent);
+}
+.nav .wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 66px;
+  gap: 18px;
+}
+.nav-brand {
+  font-family: var(--font-display);
+  font-size: 14.5px;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  color: var(--on-graphite);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-right: 20px;
+  flex-shrink: 0;
+  position: relative;
+  padding-bottom: 2px;
+}
+/* Brand mark — a small system-status indicator rather than a
+   typographic bullet. A quiet 3.4s breathing pulse plus an
+   occasional expanding ring, both far slower and lower-contrast
+   than the "LIVE" console dot elsewhere on the page, so it reads
+   as "the system is on" subconsciously rather than announcing
+   itself. Disabled entirely under reduced motion. */
+.nav-brand-mark {
+  position: relative;
+  width: 6px; height: 6px;
+  flex-shrink: 0;
+  display: inline-flex;
+}
+.nav-brand-mark .dot {
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  background: var(--teal);
+  animation: brand-pulse 3.4s ease-in-out infinite;
+}
+.nav-brand-mark .ring {
+  position: absolute; inset: -5px;
+  border-radius: 50%;
+  border: 1px solid var(--teal);
+  opacity: 0;
+  animation: brand-ring 3.4s ease-out infinite;
+}
+@keyframes brand-pulse {
+  0%, 100% { opacity: 0.55; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1); }
+}
+@keyframes brand-ring {
+  0% { opacity: 0; transform: scale(0.4); }
+  35% { opacity: 0.3; }
+  100% { opacity: 0; transform: scale(1.9); }
+}
+/* Hover: a thin accent line draws in under the wordmark and the
+   letter-spacing eases open very slightly — a small, deliberate
+   acknowledgement rather than a bounce or glow. */
+.nav-brand::after {
+  content: "";
+  position: absolute; left: 18px; right: 0; bottom: -7px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--teal), transparent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.5s var(--ease-soft);
+}
+.nav-brand:hover::after { transform: scaleX(1); }
+.nav-brand-name { transition: letter-spacing 0.4s var(--ease-soft); }
+.nav-brand:hover .nav-brand-name { letter-spacing: 0.16em; }
+@media (prefers-reduced-motion: reduce) {
+  .nav-brand-mark .dot, .nav-brand-mark .ring { animation: none; }
+  .nav-brand-mark .dot { opacity: 1; }
+}
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+.nav-links a {
+  padding: 9px 14px;
+  border-radius: 999px;
+  color: var(--on-graphite-dim);
+  transition: color 0.25s var(--ease-soft), background 0.25s var(--ease-soft), transform 0.25s var(--ease-soft);
+  position: relative;
+}
+.nav-links a:hover { color: var(--on-graphite); background: rgba(255,255,255,0.06); transform: translateY(-1px); }
+.nav-links a.active { color: var(--on-graphite); background: rgba(255,255,255,0.09); font-weight: 500; }
+.nav-links a.active::before {
+  /* A very slow, low-opacity breathing highlight behind the active
+     pill only — opacity-only, ~4.5s, so it registers as "this page is
+     live" without ever being an obvious animation. */
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: rgba(111,224,190,0.07);
+  animation: nav-active-breathe 4.5s ease-in-out infinite;
+}
+.nav-links a.active::after {
+  content: "";
+  position: absolute;
+  left: 14px; right: 14px; bottom: 3px;
+  height: 1.5px;
+  background: var(--teal);
+  border-radius: 2px;
+  transform: scaleX(0);
+  transform-origin: center;
+  animation: nav-active-in 0.5s var(--ease-soft) forwards;
+}
+@keyframes nav-active-in { to { transform: scaleX(1); } }
+@keyframes nav-active-breathe { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .nav-links a.active::after { animation: none; transform: scaleX(1); }
+  .nav-links a.active::before { animation: none; opacity: 0.7; }
+}
+
+/* .status-dot is reused inline (console/live indicators elsewhere).
+   Previously animated via `box-shadow` growth — box-shadow is a paint
+   property, so that ring forced a repaint of its region every frame,
+   continuously, for as long as the element existed in the DOM (it
+   never paused off-screen the way compositor-only work does). Rebuilt
+   as a transform/opacity ring on a pseudo-element instead — same
+   visual "pulse", GPU-composited, no repaint. */
+.status-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #6fe0be;
+  position: relative;
+  display: inline-block;
+}
+.status-dot::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  border: 1px solid #6fe0be;
+  opacity: 0;
+  animation: pulse-teal 2.4s ease-out infinite;
+}
+@keyframes pulse-teal {
+  0%   { opacity: 0.4; transform: scale(0.3); }
+  70%  { opacity: 0; transform: scale(1.9); }
+  100% { opacity: 0; transform: scale(1.9); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .status-dot::after { animation: none; opacity: 0; }
+}
+
+.nav-toggle {
+  display: none;
+  width: 38px; height: 38px;
+  border-radius: 8px;
+  border: 1px solid var(--graphite-line-strong);
+  background: transparent;
+  color: var(--on-graphite);
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.nav-toggle svg { width: 18px; height: 18px; }
+
+/* ---------- buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 13px 21px;
+  border-radius: var(--radius);
+  border: 1.5px solid var(--ink);
+  color: var(--ink);
+  background: var(--panel);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  cursor: pointer;
+}
+.btn:hover { transform: translate(-2px, -2px); box-shadow: 3px 3px 0 var(--ink); }
+.btn-primary {
+  background: var(--blue);
+  color: #fff;
+  border-color: var(--blue-deep);
+  font-weight: 600;
+}
+.btn-primary:hover { box-shadow: 3px 3px 0 var(--blue-deep); }
+.btn-on-dark { background: transparent; color: var(--on-graphite); border-color: var(--graphite-line-strong); }
+.btn-on-dark:hover { box-shadow: 3px 3px 0 var(--on-graphite-faint); }
+.btn-on-dark.btn-primary { background: var(--blue); border-color: #5578ef; color: #fff; }
+.btn-on-dark.btn-primary:hover { box-shadow: 3px 3px 0 #5578ef; }
+
+/* ---------- eyebrow ---------- */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--blue);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+.eyebrow::before { content: "◆"; font-size: 8px; color: var(--amber); }
+.eyebrow.on-dark { color: #8ba3f6; }
+.eyebrow.on-dark::before { color: #e4b567; }
+
+/* section-level heading treatment — opt-in via .eyebrow-section, used only
+   for the primary page/section headings (not small inline labels like
+   contact-card or case-study body-block eyebrows, which stay as above).
+   Ties every major heading to the same technical/console rule-line
+   language: label, then a thin rule extending to the row's edge. */
+.eyebrow-section {
+  letter-spacing: 0.16em;
+  gap: 12px;
+}
+.eyebrow-section::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--border-strong), transparent);
+  min-width: 24px;
+}
+.eyebrow-section.on-dark::after { background: linear-gradient(90deg, var(--graphite-line-strong), transparent); }
+.eyebrow-idx {
+  font-size: 15px;
+  color: var(--border-strong);
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.eyebrow-section.on-dark .eyebrow-idx { color: var(--graphite-line-strong); }
+
+/* ---------- chapter (editorial section heading) ----------
+   Replaces the flat "01 — Section Name" label with a composed
+   heading: a small kicker line (context, not a number), a large
+   two-line display title, and a faint oversized index number set
+   behind it. Entrance reveal reuses the existing .reveal /
+   .stagger-group observer — no new JS needed. */
+.chapter {
+  position: relative;
+  margin-bottom: 48px;
+  max-width: 640px;
+}
+.chapter-kicker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--blue);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 18px;
+}
+.chapter-kicker::before { content: "◆"; font-size: 8px; color: var(--amber); flex-shrink: 0; }
+.chapter-kicker::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--border-strong), transparent);
+  min-width: 24px;
+}
+.chapter[data-tone="dark"] .chapter-kicker { color: #8ba3f6; }
+.chapter[data-tone="dark"] .chapter-kicker::before { color: #e4b567; }
+.chapter[data-tone="dark"] .chapter-kicker::after { background: linear-gradient(90deg, var(--graphite-line-strong), transparent); }
+
+.chapter-title {
+  /* explicit (not just inherited from the h1–h4 rule) so every
+     section heading — Featured Case Study, How I Work, Technical
+     Focus, Other Projects — is guaranteed the same typographic
+     voice regardless of cascade order elsewhere. */
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(32px, 4.6vw, 54px);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0;
+}
+.chapter[data-tone="dark"] .chapter-title { color: var(--on-graphite); }
+.chapter-title-line { display: block; }
+
+.chapter-num {
+  position: absolute;
+  top: -0.3em;
+  right: 4%;
+  font-family: var(--font-display);
+  font-size: clamp(64px, 9vw, 128px);
+  font-weight: 700;
+  color: var(--border);
+  line-height: 1;
+  z-index: -1;
+  user-select: none;
+  pointer-events: none;
+}
+.chapter[data-tone="dark"] .chapter-num { color: var(--graphite-3); }
+@media (max-width: 780px) { .chapter-num { display: none; } }
+
+/* ---------- tag / status chip ---------- */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 6px 12px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  border: 1px solid currentColor;
+}
+.tag.blue { color: var(--blue-deep); background: var(--blue-tint); }
+.tag.teal { color: var(--teal); background: var(--teal-tint); }
+.tag.amber { color: var(--amber); background: var(--amber-tint); }
+.tag.coral { color: var(--coral); background: var(--coral-tint); }
+.tag.neutral { color: var(--ink-dim); background: var(--panel); border-style: dashed; border-color: var(--border-strong); }
+
+/* ---------- reveal-on-scroll ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.in { opacity: 1; transform: translateY(0); }
+.no-js .reveal { opacity: 1; transform: none; }
+
+.stagger-item {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.6s var(--ease-soft), transform 0.6s var(--ease-soft);
+}
+.stagger-item.in { opacity: 1; transform: translateY(0); }
+.no-js .stagger-item { opacity: 1; transform: none; }
+
+/* ---------- section helpers ---------- */
+.section { padding: 96px 0; }
+.section-tight { padding: 64px 0; }
+.section-dark { background: var(--graphite); color: var(--on-graphite); }
+
+/* ---------- footer ---------- */
+.site-footer {
+  background: var(--graphite);
+  color: var(--on-graphite-dim);
+  border-top: 1px solid var(--graphite-line);
+  margin-top: 0;
+  padding: 44px 0;
+}
+.site-footer .wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+.site-footer a { color: var(--on-graphite); }
+.site-footer a:hover { color: #6fe0be; }
+
+/* ---------- magnetic hover (JS adds .magnetic to eligible buttons) ---------- */
+.magnetic { will-change: transform; }
+
+/* ---------- skip link ---------- */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: var(--blue);
+  color: #fff;
+  padding: 12px 18px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  z-index: 200;
+  border-radius: 0 0 6px 0;
+}
+.skip-link:focus { left: 0; }
+
+/* ---------- loader ---------- */
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--graphite);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  transform-origin: center center;
+  transition: opacity 0.5s var(--ease), visibility 0.5s var(--ease);
+}
+.loader-mark {
+  font-family: var(--font-display);
+  font-size: 15px;
+  letter-spacing: 0.02em;
+  color: var(--on-graphite);
+  display: flex;
+  gap: 8px;
+  overflow: hidden;
+}
+.loader-mark span { display: inline-block; transform: translateY(110%); }
+.loader-role {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--on-graphite-faint);
+  opacity: 0;
+}
+.loader-bar {
+  width: 160px;
+  height: 1.5px;
+  background: var(--graphite-line-strong);
+  overflow: hidden;
+  border-radius: 2px;
+}
+.loader-bar span {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: var(--blue);
+  box-shadow: 0 0 8px rgba(49,89,232,0.7);
+}
+.loader.done { opacity: 0; visibility: hidden; pointer-events: none; }
+.no-js .loader { display: none; }
+
+/* ---------- page transition wipe ---------- */
+.page-wipe {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  background: var(--graphite);
+  transform: translateY(101%);
+  pointer-events: none;
+}
+.page-wipe.active { pointer-events: auto; }
+
+/* ---------- line-split headline reveal ---------- */
+.split-line { display: block; overflow: hidden; }
+.split-line-inner {
+  display: block;
+  transform: translateY(112%);
+  opacity: 0;
+  transition: transform 0.9s var(--ease), opacity 0.7s var(--ease);
+  will-change: transform, opacity;
+}
+.split-ready .split-line-inner { transform: translateY(0); opacity: 1; }
+.split-line:nth-child(1) .split-line-inner { transition-delay: 0.05s; }
+.split-line:nth-child(2) .split-line-inner { transition-delay: 0.16s; }
+.split-line:nth-child(3) .split-line-inner { transition-delay: 0.27s; }
+.split-line:nth-child(4) .split-line-inner { transition-delay: 0.38s; }
+.split-line:nth-child(5) .split-line-inner { transition-delay: 0.49s; }
+.no-js .split-line-inner { transform: none; opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .split-line-inner { transform: none; opacity: 1; transition: none; }
+}
+
+@media (max-width: 780px) {
+  .nav-toggle { display: inline-flex; }
+  .nav-links {
+    position: fixed;
+    inset: 66px 0 0 0;
+    background: var(--graphite);
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 10px 18px 24px;
+    font-size: 15px;
+    transform: translateY(-8px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    height: auto;
+  }
+  .nav-links.open { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  .nav-links a { padding: 15px 10px; border-bottom: 1px solid var(--graphite-line); border-radius: 0; }
+  .nav-links a.active::after { display: none; }
+  .section { padding: 64px 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loader { display: none; }
+  .page-wipe { display: none; }
+}

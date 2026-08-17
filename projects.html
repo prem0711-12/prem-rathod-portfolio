@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+<script>document.documentElement.classList.remove('no-js');</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projects — Prem Rathod</title>
+<meta name="description" content="Two real projects: an AI-assisted Slack support workflow prototype, and a working Equibase race-day change monitoring automation.">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/inner.css">
+<link rel="stylesheet" href="assets/css/home.css">
+<link rel="stylesheet" href="assets/css/projects.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="loader" id="loader" aria-hidden="true">
+  <div class="loader-mark mono"><span>PREM</span><span>RATHOD</span></div>
+  <div class="loader-role">Technical / Application Support</div>
+  <div class="loader-bar"><span id="loaderFill"></span></div>
+</div>
+<div class="page-wipe" id="pageWipe" aria-hidden="true"></div>
+<div class="bg-atmosphere" aria-hidden="true"><span class="bg-atmosphere-grid"></span><span class="bg-atmosphere-glow"></span><span class="bg-atmosphere-grain"></span></div>
+
+<nav class="nav">
+  <div class="wrap">
+    <div class="nav-brand"><span class="nav-brand-mark" aria-hidden="true"><span class="dot"></span><span class="ring"></span></span><span class="nav-brand-name">PREM RATHOD</span></div>
+    <button class="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18" stroke-linecap="round"/></svg>
+    </button>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="projects.html" class="active">Projects</a>
+      <a href="about.html">Profile</a>
+      <a href="contact.html">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<header class="inner-hero section-dark">
+  <div class="wrap">
+    <p class="eyebrow on-dark eyebrow-section reveal">Projects</p>
+    <h1 class="inner-title split-parent">
+      <span class="split-line"><span class="split-line-inner">Two real builds,</span></span>
+      <span class="split-line"><span class="split-line-inner">not placeholders.</span></span>
+    </h1>
+    <p class="inner-lede reveal">One private prototype, one public working automation — pick a project below to look closer.</p>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap projects-intro">
+    <div class="project-switch" id="projectSwitch" role="tablist" aria-label="Select a project">
+      <button type="button" class="project-switch-item active" data-target="proj-01" data-accent="blue" role="tab" id="tab-proj-01" aria-controls="proj-01" aria-selected="true" tabindex="0">
+        <span class="psw-idx mono">01</span>
+        <span class="psw-divider" aria-hidden="true"></span>
+        <span class="psw-body">
+          <span class="psw-title">Slack Support Assistant<span class="psw-arrow" aria-hidden="true">→</span></span>
+          <span class="psw-meta"><span class="psw-dot" aria-hidden="true"></span>Prototype · Private repository</span>
+        </span>
+      </button>
+      <button type="button" class="project-switch-item" data-target="proj-02" data-accent="teal" role="tab" id="tab-proj-02" aria-controls="proj-02" aria-selected="false" tabindex="-1">
+        <span class="psw-idx mono">02</span>
+        <span class="psw-divider" aria-hidden="true"></span>
+        <span class="psw-body">
+          <span class="psw-title">Equibase Race-Day Change Informer<span class="psw-arrow" aria-hidden="true">→</span></span>
+          <span class="psw-meta"><span class="psw-dot" aria-hidden="true"></span>Automation · Public repository</span>
+        </span>
+      </button>
+      <span class="psw-indicator ind-blue" id="pswIndicator" aria-hidden="true"></span>
+    </div>
+  </div>
+
+  <div class="wrap project-panels">
+
+    <section class="project-panel" id="proj-01" role="tabpanel" aria-labelledby="tab-proj-01">
+      <div class="project-card">
+        <div class="project-card-copy">
+          <span class="project-card-idx mono">PROJECT 01 · PROTOTYPE</span>
+          <h2 class="project-card-title">Slack Support Assistant</h2>
+          <p class="project-card-desc">A private prototype exploring how incoming Slack support conversations could be triaged, assigned, and answered faster — with AI drafting responses that a human engineer always reviews before they're sent.</p>
+          <div class="project-card-tags">
+            <span class="tag blue">Round-robin assignment</span>
+            <span class="tag teal">Presence-aware routing</span>
+            <span class="tag amber">AI-assisted drafting</span>
+          </div>
+          <div class="pipeline-chain" aria-hidden="true">
+            <span class="pipeline-item"><span class="pipeline-step done"><span class="dot"></span>NEW MESSAGE</span><span class="pipeline-arrow">→</span></span>
+            <span class="pipeline-item"><span class="pipeline-step done"><span class="dot"></span>AVAILABILITY CHECK</span><span class="pipeline-arrow">→</span></span>
+            <span class="pipeline-item"><span class="pipeline-step done"><span class="dot"></span>ROUND-ROBIN ASSIGN</span><span class="pipeline-arrow">→</span></span>
+            <span class="pipeline-item"><span class="pipeline-step done"><span class="dot"></span>AI DRAFT</span><span class="pipeline-arrow">→</span></span>
+            <span class="pipeline-item"><span class="pipeline-step done"><span class="dot"></span>HUMAN REVIEW</span><span class="pipeline-arrow">→</span></span>
+            <span class="pipeline-item"><span class="pipeline-step done"><span class="dot"></span>SENT</span></span>
+          </div>
+          <a href="case-studies/slack-support-assistant/index.html" class="btn">Read the full project write-up →</a>
+        </div>
+        <div class="project-card-status project-card-status--blue mono">
+          <div class="status-row"><span>REPOSITORY</span><span class="v">PRIVATE</span></div>
+          <div class="status-row"><span>STAGE</span><span class="v blue">PROTOTYPE</span></div>
+          <div class="status-row"><span>PRODUCTION USE</span><span class="v">NO</span></div>
+          <div class="status-row"><span>NEXT PROJECT</span><span class="v faint">IN PROGRESS</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="project-panel" id="proj-02" role="tabpanel" aria-labelledby="tab-proj-02" hidden>
+      <div class="project-card">
+        <div class="project-card-copy">
+          <span class="project-card-idx mono">PROJECT 02 · AUTOMATION</span>
+          <h2 class="project-card-title">Equibase Race-Day Change Informer</h2>
+          <p class="project-card-desc">An automated race-day change monitoring and notification system that detects, filters, groups and reports operationally meaningful Equibase changes and sends them to Slack.</p>
+          <div class="project-card-tags">
+            <span class="tag teal">Change detection</span>
+            <span class="tag blue">Filtering &amp; grouping</span>
+            <span class="tag amber">Slack notifications</span>
+          </div>
+          <div class="pipeline-chain" aria-hidden="true">
+            <span class="pipeline-item"><span class="pipeline-step done"><span class="dot"></span>EQUIBASE DATA</span><span class="pipeline-arrow">→</span></span>
+            <span class="pipeline-item"><span class="pipeline-step done"><span class="dot"></span>XML SNAPSHOT</span><span class="pipeline-arrow">→</span></span>
+            <span class="pipeline-item"><span class="pipeline-step done"><span class="dot"></span>PARSE</span><span class="pipeline-arrow">→</span></span>
+            <span class="pipeline-item"><span class="pipeline-step done"><span class="dot"></span>CHANGE DETECTION</span><span class="pipeline-arrow">→</span></span>
+            <span class="pipeline-item"><span class="pipeline-step done"><span class="dot"></span>FILTER / GROUP</span><span class="pipeline-arrow">→</span></span>
+            <span class="pipeline-item"><span class="pipeline-step done"><span class="dot"></span>OPERATIONAL EVENTS</span><span class="pipeline-arrow">→</span></span>
+            <span class="pipeline-item"><span class="pipeline-step done"><span class="dot"></span>REPORT</span><span class="pipeline-arrow">→</span></span>
+            <span class="pipeline-item"><span class="pipeline-step done"><span class="dot"></span>SLACK</span></span>
+          </div>
+          <a href="case-studies/equibase-race-day-informer/index.html" class="btn">View project details →</a>
+        </div>
+        <div class="project-card-status mono">
+          <div class="status-row"><span>REPOSITORY</span><span class="v teal">PUBLIC</span></div>
+          <div class="status-row"><span>STAGE</span><span class="v amber">WORKING · IN PROGRESS</span></div>
+          <div class="status-row"><span>OUTPUT</span><span class="v">Report + Slack alert</span></div>
+          <div class="status-row"><span>INTERNAL SITE COMPARE</span><span class="v faint">Not yet implemented</span></div>
+          <div class="status-row"><span>TESTS</span><span class="v">Automated</span></div>
+        </div>
+      </div>
+      <div class="project-card-evidence">
+        <p class="path-note mono">Real run · <span class="v">6 operational events</span> detected and delivered to Slack</p>
+        <div class="change-list">
+          <div class="change-list-row"><span class="ct">SCRATCH</span><span>Emerald Downs · Race 4 · I'm Ok (#1)</span></div>
+          <div class="change-list-row"><span class="ct">TRACK COND.</span><span>Prairie Meadows · Dirt: Fast · Races 1–11</span></div>
+          <div class="change-list-row"><span class="ct">JOCKEY</span><span>Prairie Meadows · Race 2 · Separannetta G (#7)</span></div>
+          <div class="change-list-row"><span class="ct">JOCKEY</span><span>Prairie Meadows · Race 3 · Zoomin for Blood (#7)</span></div>
+          <div class="change-list-row"><span class="ct">JOCKEY</span><span>Prairie Meadows · Race 3 · Audreys Lil Cowgirl (#6)</span></div>
+        </div>
+        <p class="notify-line">CHANGES DETECTED → SLACK NOTIFICATION SENT</p>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>© Prem Rathod</span>
+    <span><a href="https://github.com/prem0711-12" target="_blank" rel="noopener">GitHub</a> · <a href="https://linkedin.com/in/premrathodtech" target="_blank" rel="noopener">LinkedIn</a></span>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/projects.js"></script>
+</body>
+</html>
