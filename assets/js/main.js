@@ -340,4 +340,29 @@
       next();
     });
   }
+  /* ==========================================================
+     LINKEDIN EMBED CROP — LinkedIn's iframe always renders the
+     full post at its native 504px width and full (1600px+)
+     height. This scales that fixed-size embed down to fit
+     whatever width the .li-embed-frame column actually has, and
+     sets the frame's visible height from data-crop so it reads
+     as a short preview card instead of a tall scrolling strip.
+     ========================================================== */
+  var NATIVE_EMBED_WIDTH = 504;
+  var liFrames = document.querySelectorAll('.li-embed-frame');
+  function sizeLinkedInEmbeds() {
+    liFrames.forEach(function (frame) {
+      var cropHeight = parseInt(frame.getAttribute('data-crop'), 10) || 360;
+      var scaler = frame.querySelector('.li-embed-scaler');
+      if (!scaler) return;
+      var scale = frame.clientWidth / NATIVE_EMBED_WIDTH;
+      scaler.style.transform = 'scale(' + scale + ')';
+      frame.style.height = Math.round(cropHeight * scale) + 'px';
+    });
+  }
+  if (liFrames.length) {
+    sizeLinkedInEmbeds();
+    window.addEventListener('resize', sizeLinkedInEmbeds);
+    window.addEventListener('load', sizeLinkedInEmbeds);
+  }
 })();

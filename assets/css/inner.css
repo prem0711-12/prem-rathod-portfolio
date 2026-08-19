@@ -90,68 +90,267 @@
   min-width: 24px;
 }
 
-/* Cards follow the same icon-circle + label/value + arrow layout as
-   .archive-dest on the homepage, rather than a new pattern — same
-   border/hover language (translate + hard shadow), just carrying an
-   icon and an interaction affordance instead of plain text. */
-.contact-grid { display: grid; gap: 14px; margin-top: 0; max-width: 560px; }
-.contact-card {
+/* Quick contact — replaces the old three-card "Direct channels" grid.
+   GitHub and LinkedIn already get their own dedicated columns below, so
+   email is the only channel that needs a row here — and it only needs
+   to be a single icon-affordance, not a repeat of the label/value card
+   pattern. Hover/focus reveals the address in a small tooltip; the
+   button itself is always a direct mailto link, tooltip or not. */
+.quick-contact { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin: 0 0 8px; }
+
+.email-fab {
+  position: relative;
+  flex-shrink: 0;
+  width: 46px; height: 46px;
+  border-radius: 50%;
+  border: 1px solid var(--border-strong);
+  background: var(--panel);
   display: flex;
   align-items: center;
-  gap: 18px;
-  padding: 18px 20px;
-  background: var(--panel);
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius-lg);
+  justify-content: center;
+  color: #ea4335;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
-.contact-card:hover, .contact-card:focus-visible { transform: translate(-2px, -2px); box-shadow: 4px 4px 0 var(--amber); border-color: var(--ink); }
+.email-fab svg { width: 20px; height: 20px; display: block; }
+.email-fab:hover, .email-fab:focus-visible { transform: translate(-2px, -2px); box-shadow: 4px 4px 0 var(--amber); border-color: var(--ink); }
 
-.contact-icon {
-  flex-shrink: 0;
-  width: 42px; height: 42px;
-  border-radius: 50%;
-  border: 1px solid var(--border-strong);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: border-color 0.2s ease;
+.email-fab-tip {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 10px);
+  transform: translate(-50%, 4px);
+  background: var(--ink);
+  color: var(--on-graphite);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  white-space: nowrap;
+  padding: 7px 11px;
+  border-radius: var(--radius);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease;
 }
-.contact-icon svg { width: 20px; height: 20px; display: block; }
-.contact-card:hover .contact-icon, .contact-card:focus-visible .contact-icon { border-color: var(--ink); }
-/* Real brand colors on the mark itself (kept off everything else on
-   the card) — this is what makes each icon read as "Gmail" / "LinkedIn"
-   / "GitHub" at a glance rather than three identical generic glyphs. */
-.contact-icon--gmail svg { color: #ea4335; }
-.contact-icon--linkedin svg { color: #0a66c2; }
-.contact-icon--github svg { color: var(--ink); }
-
-.contact-lbl-wrap { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-.contact-lbl { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); }
-.contact-value { font-size: 15px; color: var(--ink); font-family: var(--font-mono); word-break: break-word; }
-
-.contact-arrow {
-  margin-left: auto;
-  width: 36px; height: 36px;
-  border-radius: 50%;
-  border: 1px solid var(--border-strong);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--ink-dim);
-  transition: transform 0.3s var(--ease), color 0.25s ease, border-color 0.25s ease;
-  flex-shrink: 0;
+.email-fab-tip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--ink);
 }
-.contact-arrow svg { width: 15px; height: 15px; display: block; }
-.contact-card:hover .contact-arrow, .contact-card:focus-visible .contact-arrow { transform: rotate(45deg); color: var(--blue); border-color: var(--blue); }
+.email-fab:hover .email-fab-tip,
+.email-fab:focus-visible .email-fab-tip {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
 
-.contact-note { margin-top: 36px; }
+.contact-note { margin: 0; max-width: 46ch; }
 
-@media (max-width: 480px) {
-  .contact-card { gap: 14px; padding: 16px; }
-  .contact-arrow { display: none; }
+@media (max-width: 560px) {
+  .email-fab-tip { left: 0; transform: translate(0, 4px); }
+  .email-fab-tip::after { left: 18px; }
+  .email-fab:hover .email-fab-tip, .email-fab:focus-visible .email-fab-tip { transform: translate(0, 0); }
 }
 
 @media (max-width: 760px) {
   .skills-grid { grid-template-columns: 1fr; }
+}
+
+/* contact — "beyond the inbox" composition: the page used to just stop
+   after Direct Channels. This gives the visitor two more ways to explore
+   the work (LinkedIn activity, GitHub repos) without turning the page
+   into a generic link-card grid — LinkedIn keeps the editorial card/list
+   language already used by .contact-card, GitHub borrows the site's own
+   dark "console" panel language (same one used by .terminal / .console
+   elsewhere) so the two columns read as one system, not two bolted-on
+   widgets. */
+.contact-explore { margin-top: 48px; }
+.contact-explore .contact-kicker { margin: 0 0 22px; }
+
+.explore-subkicker {
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin: 0 0 14px;
+}
+
+.contact-explore-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: clamp(20px, 3vw, 32px);
+  align-items: start;
+}
+
+/* -- LinkedIn column: same panel/border language as the rest of the
+   page's cards, wrapping LinkedIn's own iframe embed. LinkedIn renders
+   the *entire* post at its full native height (1650px+), which has no
+   way to be shortened from the embed code itself — left uncropped it
+   turns into a long vertical strip with its own internal scrollbar,
+   totally out of step with the rest of the page. Instead this crops
+   the embed to a fixed preview window (data-crop, in px) with a
+   gradient fade and a "Read full post" button, so it reads as an
+   intentional teaser card rather than a stray tall widget. The iframe
+   is rendered at LinkedIn's native 504px width and scaled down by JS
+   (see main.js) to fit whatever the column's actual width is, so the
+   crop looks right at any screen size, not just 504px+ layouts. */
+.li-stack { display: flex; flex-direction: column; gap: 20px; }
+.li-post {
+  background: var(--panel);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.li-post-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+}
+.li-post-icon { flex-shrink: 0; width: 15px; height: 15px; color: #0a66c2; display: flex; }
+.li-post-icon svg { width: 100%; height: 100%; display: block; }
+.li-post-lbl { font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-faint); }
+.li-post-link {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--ink-dim);
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+.li-post-link:hover, .li-post-link:focus-visible { color: var(--blue-deep); }
+
+.li-embed-frame {
+  position: relative;
+  width: 100%;
+  height: 360px; /* fallback before JS measures the column and sets the real crop */
+  overflow: hidden;
+  background: var(--paper);
+}
+.li-embed-scaler {
+  position: absolute;
+  top: 0; left: 0;
+  width: 504px; /* LinkedIn's native embed width — JS scales this box down to fit */
+  transform-origin: top left;
+}
+.li-embed-scaler iframe {
+  display: block;
+  width: 504px;
+  border: 0;
+  pointer-events: none; /* it's a cropped preview, not a scrollable frame — clicks go to the CTA below */
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.li-embed-frame.is-loaded .li-embed-scaler iframe { opacity: 1; }
+.li-embed-frame::before {
+  /* Skeleton shimmer shown until the iframe fires onload — removes the
+     dead blank-white gap while LinkedIn's frame is fetching. */
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, var(--paper) 30%, var(--border) 50%, var(--paper) 70%);
+  background-size: 200% 100%;
+  animation: li-shimmer 1.4s ease-in-out infinite;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+.li-embed-frame.is-loaded::before { opacity: 0; pointer-events: none; }
+@keyframes li-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+.li-embed-fade {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 90px;
+  background: linear-gradient(to bottom, rgba(248,248,245,0) 0%, var(--panel) 78%);
+  pointer-events: none;
+}
+
+.li-embed-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+.li-embed-cta-arrow { transition: transform 0.3s var(--ease); }
+.li-embed-cta:hover, .li-embed-cta:focus-visible { color: var(--blue-deep); background: var(--border); }
+.li-embed-cta:hover .li-embed-cta-arrow, .li-embed-cta:focus-visible .li-embed-cta-arrow { transform: translateX(3px); }
+
+/* -- GitHub column: dark console-style panel, echoing the same
+   graphite chrome used by nav/hero/footer/.terminal, so it reads as a
+   distinct "system panel" next to the light LinkedIn cards while still
+   belonging to the same visual language (mono labels, hairline rules,
+   restrained accents). -- */
+.gh-panel {
+  background: var(--graphite-2);
+  border: 1px solid var(--graphite-line-strong);
+  border-radius: var(--radius-lg);
+  padding: 26px 24px;
+  color: var(--on-graphite);
+  box-shadow: 0 18px 40px -22px rgba(0,0,0,0.4);
+}
+.gh-id { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.gh-icon { width: 22px; height: 22px; color: var(--on-graphite); flex-shrink: 0; }
+.gh-icon svg { width: 100%; height: 100%; display: block; }
+.gh-handle { font-family: var(--font-mono); font-size: 15px; color: var(--on-graphite); }
+.gh-summary { color: var(--on-graphite-dim); font-size: 13.5px; line-height: 1.7; max-width: 42ch; }
+.gh-list-lbl {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--on-graphite-faint);
+  margin: 22px 0 4px;
+}
+.gh-repo-list { display: flex; flex-direction: column; }
+.gh-repo-row { padding: 12px 0; border-bottom: 1px dashed var(--graphite-line); }
+.gh-repo-row:last-child { border-bottom: none; }
+.gh-repo-name {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--on-graphite);
+  word-break: break-word;
+  transition: color 0.2s ease;
+}
+.gh-repo-name:hover, .gh-repo-name:focus-visible { color: #6fe0be; }
+.gh-repo-desc { color: var(--on-graphite-faint); font-size: 12.5px; line-height: 1.6; margin-top: 4px; }
+
+.gh-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 24px;
+  padding: 13px 18px;
+  border: 1px solid var(--graphite-line-strong);
+  border-radius: var(--radius-lg);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--on-graphite);
+  transition: transform 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+.gh-cta-arrow { transition: transform 0.3s var(--ease); }
+.gh-cta:hover, .gh-cta:focus-visible { transform: translate(-2px, -2px); border-color: #6fe0be; color: #6fe0be; }
+.gh-cta:hover .gh-cta-arrow, .gh-cta:focus-visible .gh-cta-arrow { transform: translateX(3px); }
+
+@media (max-width: 900px) {
+  .contact-explore-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+  .gh-panel { padding: 20px 18px; }
 }
