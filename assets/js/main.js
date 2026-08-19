@@ -117,7 +117,7 @@
         smoothWheel: true,
         autoRaf: false
       });
-      html.classList.add('lenis');
+      html.classList.add('lenis', 'lenis-smooth');
       if (window.gsap && window.ScrollTrigger) {
         // Single driver: let GSAP's ticker tick Lenis. Do NOT also run a
         // self-contained requestAnimationFrame loop for Lenis — driving it
