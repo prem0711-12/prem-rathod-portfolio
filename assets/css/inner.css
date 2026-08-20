@@ -11,22 +11,105 @@
 .inner-block h2 { font-size: 22px; margin-bottom: 16px; }
 .cs-body { color: var(--ink-dim); line-height: 1.8; font-size: 15.5px; max-width: 68ch; }
 
-.skills-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin-top: 8px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
-.skills-grid > div { background: var(--panel); padding: 22px; }
-.skills-h {
-  font-family: var(--font-mono);
-  font-size: 11.5px;
-  letter-spacing: 0.05em;
-  color: var(--blue-deep);
-  margin-bottom: 10px;
-  text-transform: uppercase;
-  font-weight: 600;
-}
-
 .timeline-note {
   border-left: 2px solid var(--border-strong);
   padding-left: 20px;
   margin-top: 8px;
+}
+
+/* about — Professional Evolution: an editorial vertical timeline (not a
+   grid of cards) showing the shift in focus over time — support to
+   investigation to automation. Reuses .stagger-group/.stagger-item for
+   entrance animation, no new JS needed. Dot colour steps through the
+   site's existing three-accent language (blue/teal/amber) instead of
+   icons, echoing the same progression used elsewhere on the site. */
+.evolution-intro { margin: -6px 0 26px; }
+.evolution-track { position: relative; }
+.evolution-item {
+  position: relative;
+  padding: 0 0 34px 32px;
+  border-left: 2px solid var(--border-strong);
+}
+.evolution-item:last-child { padding-bottom: 2px; border-left-color: transparent; }
+.evolution-dot {
+  position: absolute;
+  left: -7px;
+  top: 3px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--panel);
+  border: 2px solid var(--blue-deep);
+}
+.evolution-item[data-stage="2"] .evolution-dot { border-color: var(--teal); }
+.evolution-item[data-stage="3"] .evolution-dot { border-color: var(--amber); }
+.evolution-stage {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin: 0 0 8px;
+}
+.evolution-n { color: var(--border-strong); font-weight: 600; }
+.evolution-title {
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0 0 8px;
+}
+.evolution-body { color: var(--ink-dim); line-height: 1.75; font-size: 15px; max-width: 60ch; margin: 0; }
+
+/* about — What I Bring: numbered asymmetric capability rows, deliberately
+   not another skills-grid of boxes. Dashed dividers echo .gh-repo-row's
+   language from the Contact page's GitHub panel. */
+.capability-list { margin-top: 6px; }
+.capability-row {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  gap: 16px;
+  padding: 20px 0;
+  border-bottom: 1px dashed var(--border-strong);
+}
+.capability-row:first-child { border-top: 1px solid var(--border); }
+.capability-n {
+  font-size: 13px;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+  padding-top: 2px;
+}
+.capability-name { font-family: var(--font-display); font-size: 16px; font-weight: 600; color: var(--ink); margin: 0 0 5px; }
+.capability-desc { color: var(--ink-dim); font-size: 14.5px; line-height: 1.7; max-width: 58ch; margin: 0; }
+
+/* about — Support → Automation: small link chips pointing at the two
+   real prototypes, styled like .btn but lighter, so this reads as
+   evidence for the paragraph rather than a plain text link list. */
+.profile-project-links { display: flex; flex-wrap: wrap; gap: 12px; margin: 4px 0 22px; }
+.profile-project-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--ink-dim);
+  background: var(--panel);
+  transition: transform 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+.profile-project-link:hover, .profile-project-link:focus-visible {
+  transform: translate(-2px, -2px);
+  border-color: var(--ink);
+  color: var(--ink);
+  box-shadow: 3px 3px 0 var(--border-strong);
+}
+
+@media (max-width: 560px) {
+  .evolution-item { padding-left: 24px; }
 }
 
 /* about — opening statement treatment: the section's existing first
@@ -96,7 +179,7 @@
    to be a single icon-affordance, not a repeat of the label/value card
    pattern. Hover/focus reveals the address in a small tooltip; the
    button itself is always a direct mailto link, tooltip or not. */
-.quick-contact { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin: 0 0 8px; }
+.quick-contact { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin: 40px 0 8px; }
 
 .email-fab {
   position: relative;
@@ -146,15 +229,13 @@
 }
 
 .contact-note { margin: 0; max-width: 46ch; }
+.contact-note-email { color: var(--ink); font-weight: 600; text-decoration: underline; text-decoration-color: var(--border-strong); text-underline-offset: 3px; transition: color 0.2s ease, text-decoration-color 0.2s ease; }
+.contact-note-email:hover, .contact-note-email:focus-visible { color: var(--blue-deep); text-decoration-color: var(--blue-deep); }
 
 @media (max-width: 560px) {
   .email-fab-tip { left: 0; transform: translate(0, 4px); }
   .email-fab-tip::after { left: 18px; }
   .email-fab:hover .email-fab-tip, .email-fab:focus-visible .email-fab-tip { transform: translate(0, 0); }
-}
-
-@media (max-width: 760px) {
-  .skills-grid { grid-template-columns: 1fr; }
 }
 
 /* contact — "beyond the inbox" composition: the page used to just stop
@@ -353,4 +434,101 @@
 
 @media (max-width: 480px) {
   .gh-panel { padding: 20px 18px; }
+}
+
+/* contact — Personal / Photo: its own editorial section, deliberately
+   separate from Direct Channels, LinkedIn, and GitHub above. Dark
+   graphite panel (same chrome as .gh-panel) with copy on the left and
+   the portrait on the right; the email affordance lives directly under
+   the photo. Photo shows its true colour at rest — no hover-only
+   colour reveal. */
+.portrait-section { margin-top: 48px; }
+
+.portrait-panel {
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(120% 140% at 0% 0%, rgba(20,125,103,0.18), transparent 55%),
+    radial-gradient(110% 130% at 100% 100%, rgba(49,89,232,0.15), transparent 55%),
+    linear-gradient(165deg, #232936 0%, #1b212a 45%, #171b22 100%);
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: var(--radius-lg);
+  padding: 34px 36px;
+  box-shadow:
+    0 24px 56px -26px rgba(0,0,0,0.6),
+    0 1px 0 rgba(255,255,255,0.06) inset,
+    0 0 0 1px rgba(255,255,255,0.03) inset;
+}
+
+.portrait-panel-grid {
+  display: grid;
+  grid-template-columns: 1fr 220px;
+  gap: 40px;
+  align-items: center;
+}
+
+.portrait-panel-copy { padding-top: 4px; }
+
+.portrait-panel-photo { display: flex; flex-direction: column; align-items: center; gap: 24px; width: 100%; }
+
+.portrait-frame {
+  position: relative;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 190px;
+  border: 1px solid var(--graphite-line-strong);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--graphite-3);
+  aspect-ratio: 1 / 1;
+  box-shadow: 0 12px 30px -18px rgba(0,0,0,0.6);
+}
+.portrait-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+.portrait-fig-cap {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #fff;
+  background: rgba(12,14,18,0.55);
+  padding: 4px 8px;
+  border-radius: 999px;
+}
+
+.portrait-meta-row { display: flex; flex-direction: column; gap: 3px; margin: 0 0 14px; font-family: var(--font-mono); }
+.portrait-meta-row .k { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--on-graphite-faint); }
+.portrait-meta-row .v { font-size: 13.5px; color: var(--on-graphite); font-weight: 600; }
+.portrait-caption { margin: 4px 0 0; font-family: var(--font-sans); font-size: 13px; color: var(--on-graphite-dim); line-height: 1.7; max-width: 36ch; }
+
+.email-fab--on-dark {
+  background: var(--graphite-3);
+  border-color: var(--graphite-line-strong);
+}
+.email-fab--on-dark:hover, .email-fab--on-dark:focus-visible {
+  border-color: #6fe0be;
+  box-shadow: 4px 4px 0 var(--amber);
+}
+
+@media (max-width: 900px) {
+  .portrait-panel { padding: 28px; }
+  .portrait-panel-grid { grid-template-columns: 1fr 190px; gap: 28px; }
+  .portrait-frame { max-width: 170px; }
+}
+
+@media (max-width: 640px) {
+  .portrait-panel { padding: 26px 24px; }
+  .portrait-panel-grid { grid-template-columns: 1fr; gap: 22px; }
+  .portrait-panel-photo { max-width: 160px; margin: 0 auto; gap: 18px; }
+  .portrait-frame { max-width: 160px; }
+  .portrait-panel-copy { order: 2; padding-top: 0; text-align: center; }
+  .portrait-panel-photo { order: 1; }
+  .portrait-meta-row { align-items: center; }
 }

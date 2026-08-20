@@ -173,7 +173,7 @@
   /* ==========================================================
      SCROLL REVEAL — plain sections + staggered groups
      ========================================================== */
-  var revealEls = document.querySelectorAll('.reveal');
+  var revealEls = document.querySelectorAll('.reveal:not(.timed-reveal)');
   if ('IntersectionObserver' in window && revealEls.length) {
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) { if (e.isIntersecting) e.target.classList.add('in'); });
@@ -181,6 +181,26 @@
     revealEls.forEach(function (el) { io.observe(el); });
   } else {
     revealEls.forEach(function (el) { el.classList.add('in'); });
+  }
+
+  /* ==========================================================
+     TIMED REVEAL — for elements (e.g. the Contact page's
+     personal card) that should appear a couple of seconds after
+     the page opens, regardless of scroll position, instead of
+     the usual scroll-into-view behaviour above. Reuses the same
+     .reveal hidden/visible styling — just driven by a timer.
+     ========================================================== */
+  var timedEls = document.querySelectorAll('.timed-reveal');
+  if (timedEls.length) {
+    if (reduceMotion) {
+      timedEls.forEach(function (el) { el.classList.add('in'); });
+    } else {
+      setTimeout(function () {
+        timedEls.forEach(function (el, i) {
+          setTimeout(function () { el.classList.add('in'); }, i * 140);
+        });
+      }, 2200);
+    }
   }
 
   var staggerGroups = document.querySelectorAll('.stagger-group');

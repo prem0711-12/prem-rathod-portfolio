@@ -55,33 +55,96 @@
     <p class="chapter-kicker mono">Behind the Investigations</p>
     <p class="about-statement">I work in production-facing technical support for SaaS platforms — investigating customer-impacting incidents, analysing logs and databases, troubleshooting integrations, and working with engineering teams to drive issues toward resolution.</p>
     <p class="cs-body about-support">Day to day, that means understanding what happened in production, identifying the root cause, validating impact, and communicating findings clearly to both technical and non-technical stakeholders.</p>
+    <p class="cs-body about-support">That instinct — trace the symptom back to its actual source, don't stop at the first plausible explanation — is also what's pulled me toward automation and AI-assisted tooling. When part of an investigation starts to feel repeatable, I want to see whether it can be built instead of redone by hand.</p>
   </section>
 
   <section class="inner-block reveal">
-    <h2>Where I focus</h2>
-    <div class="skills-grid stagger-group">
-      <div class="stagger-item">
-        <h3 class="skills-h">Production & Application Support</h3>
-        <p class="cs-body">Incident investigation and troubleshooting · Root Cause Analysis (RCA) · Production issue monitoring · Customer-impacting issue investigation · Incident documentation · Engineering escalation and coordination</p>
+    <p class="chapter-kicker mono">Focus Over Time</p>
+    <h2>Where the Work Has Moved</h2>
+    <p class="cs-body evolution-intro">Not three separate skills so much as one continuous line — each stage grew out of spending enough time in the one before it.</p>
+    <div class="evolution-track stagger-group">
+      <article class="evolution-item stagger-item" data-stage="1">
+        <span class="evolution-dot" aria-hidden="true"></span>
+        <p class="evolution-stage mono"><span class="evolution-n">01</span>Where it starts</p>
+        <h3 class="evolution-title">Production &amp; Application Support</h3>
+        <p class="evolution-body">Every investigation still begins here — a customer-impacting issue that needs to be understood before it can be explained to anyone else. Triage, impact assessment, and getting a clear signal to the right person, fast.</p>
+      </article>
+      <article class="evolution-item stagger-item" data-stage="2">
+        <span class="evolution-dot" aria-hidden="true"></span>
+        <p class="evolution-stage mono"><span class="evolution-n">02</span>Where it deepens</p>
+        <h3 class="evolution-title">Technical Investigation</h3>
+        <p class="evolution-body">Understanding a symptom isn't the same as finding the cause. Over time the support work pulled me further into the layer underneath it — querying data directly, reading logs instead of waiting for a summary, checking an API response instead of assuming it's fine.</p>
+      </article>
+      <article class="evolution-item stagger-item" data-stage="3">
+        <span class="evolution-dot" aria-hidden="true"></span>
+        <p class="evolution-stage mono"><span class="evolution-n">03</span>Where it's heading</p>
+        <h3 class="evolution-title">Automation &amp; AI-Assisted Tooling</h3>
+        <p class="evolution-body">The more incidents and investigations start to repeat, the more it's obvious which parts don't need to be done by hand every time. That's the direction I'm building in now — using AI-assisted tools to prototype the automation myself, rather than only asking someone else to.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="inner-block reveal">
+    <p class="chapter-kicker mono">Capability</p>
+    <h2>What I Bring</h2>
+    <div class="capability-list stagger-group">
+      <div class="capability-row stagger-item">
+        <span class="capability-n mono">01</span>
+        <div>
+          <h3 class="capability-name">Incident Investigation &amp; RCA</h3>
+          <p class="capability-desc">Tracing a customer-facing symptom back to its actual root cause, then documenting it clearly enough that someone else could follow the same trail.</p>
+        </div>
       </div>
-      <div class="stagger-item">
-        <h3 class="skills-h">Technical Investigation</h3>
-        <p class="cs-body">SQL / MySQL · GCP & log analysis · API troubleshooting · Postman · Firebase · Database investigation · Basic cloud and application troubleshooting</p>
+      <div class="capability-row stagger-item">
+        <span class="capability-n mono">02</span>
+        <div>
+          <h3 class="capability-name">SQL &amp; Data Investigation</h3>
+          <p class="capability-desc">Querying production data directly with SQL / MySQL rather than waiting on a summary, to confirm what actually happened.</p>
+        </div>
       </div>
-      <div class="stagger-item">
-        <h3 class="skills-h">Automation & AI-Assisted Workflows</h3>
-        <p class="cs-body">Support workflow automation · AI-assisted investigation and documentation · Workflow prototyping · Using AI tools to design and build practical support tooling</p>
+      <div class="capability-row stagger-item">
+        <span class="capability-n mono">03</span>
+        <div>
+          <h3 class="capability-name">API &amp; Log / Cloud Investigation</h3>
+          <p class="capability-desc">Reading logs, GCP output, and API responses (Postman, Firebase) to isolate where a request or process actually failed.</p>
+        </div>
+      </div>
+      <div class="capability-row stagger-item">
+        <span class="capability-n mono">04</span>
+        <div>
+          <h3 class="capability-name">Workflow Automation</h3>
+          <p class="capability-desc">Recognising which parts of a repeated support or investigation process can be built once instead of repeated by hand.</p>
+        </div>
+      </div>
+      <div class="capability-row stagger-item">
+        <span class="capability-n mono">05</span>
+        <div>
+          <h3 class="capability-name">AI-Assisted Development</h3>
+          <p class="capability-desc">Defining the problem, workflow, and decision logic myself, then directing AI-assisted tools to help build and test it.</p>
+        </div>
       </div>
     </div>
   </section>
 
   <section class="inner-block reveal">
-    <h2>How I use AI-assisted tooling</h2>
-    <p class="cs-body">I'm not presenting myself as a software developer. When I build a prototype like Slack Support Assistant, I define the problem, the workflow, the decision logic, and the testing direction — AI-assisted tools help with the implementation. I'm interested in AI as something that supports a human support team's judgment, not something that replaces it.</p>
+    <p class="chapter-kicker mono">From the Inside</p>
+    <p class="about-statement">I build automation for the kind of problems I've spent time being close to — not the other way around.</p>
+    <p class="cs-body about-support">Working inside production support means spending a lot of time on things that repeat: the same category of question, the same shape of investigation, the same manual check before something ships. That's the perspective behind both prototypes on this site — each one starts from a support-side problem I recognised, not a technology I wanted to try out.</p>
+    <div class="profile-project-links reveal">
+      <a class="profile-project-link" href="case-studies/slack-support-assistant/index.html">→ Slack Support Assistant</a>
+      <a class="profile-project-link" href="case-studies/equibase-race-day-informer/index.html">→ Equibase Race-Day Change Informer</a>
+    </div>
+    <p class="cs-body about-support">I'm not presenting either as a production system, and I'm not presenting myself as a software developer. On both, I define the problem, the workflow, and the decision logic — AI-assisted tools help turn that into working code, which I test and refine.</p>
   </section>
 
+  <div class="closing-mark reveal">
+    <span class="line-1">Application support, automation, and AI-assisted tooling — pointed at the same problems.</span>
+    <span class="line-2">That's the direction I'm building toward.</span>
+  </div>
+
   <div class="cs-nav-footer">
-    <a href="case-studies/slack-support-assistant/index.html">See the Slack Support Assistant project →</a>
+    <a href="case-studies/slack-support-assistant/index.html">Slack Support Assistant →</a>
+    <a href="case-studies/equibase-race-day-informer/index.html">Equibase Race-Day Informer →</a>
     <a href="contact.html">Get in touch →</a>
   </div>
 </main>
